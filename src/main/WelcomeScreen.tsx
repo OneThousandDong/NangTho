@@ -9,7 +9,7 @@ import React from "react";
 import colors from "../config/Restaurant/colors";
 import SPACING from "../config/SPACING";
 
-const WelcomeScreen = () => {
+const WelcomeScreen = ({navigation}) => {
   return (
     <ImageBackground
       style={{ flex: 1 }}
@@ -55,6 +55,7 @@ const WelcomeScreen = () => {
               alignItems: "center",
               marginTop: SPACING * 3,
             }}
+            onPress={() => navigation.navigate('Home')}
           >
             <Text
               style={{

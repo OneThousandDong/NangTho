@@ -14,59 +14,204 @@ import SPACING from "../config/SPACING";
 const { height } = Dimensions.get("window");
 // import { Ionicons } from "@expo/vector-icons";
 import colors from "../config/Restaurant/colors";
+import SettingSvg from "../assets/ic_setting.svg";
+import BackSvg from "../assets/ic_back.svg";
+import { SwiperFlatList } from 'react-native-swiper-flatlist';
 
-const RecipeDetailScreen = ({ route }) => {
+const RecipeDetailScreen = ({ route, navigation }) => {
   const {recipe} = route.params;
-    console.log(route)
   return (
     <>
+        {/*<View style={{flexDirection: 'row', width: '100%'}}>*/}
+        {/*    <ScrollView*/}
+        {/*        horizontal*/}
+        {/*        showsHorizontalScrollIndicator={false}*/}
+        {/*    >*/}
+        {/*        <ImageBackground*/}
+        {/*            style={{*/}
+        {/*                padding: SPACING * 2,*/}
+        {/*                height: height / 2.5,*/}
+        {/*                // padding: SPACING * 2,*/}
+        {/*                paddingTop: SPACING * 4,*/}
+        {/*                flexDirection: "row",*/}
+        {/*                justifyContent: "space-between",*/}
+        {/*            }}*/}
+        {/*            source={require('../assets/restaurant/brooke-lark-jUPOXXRNdcA-unsplash.jpeg')}*/}
+        {/*        >*/}
+        {/*            <TouchableOpacity*/}
+        {/*                style={{*/}
+        {/*                    height: SPACING * 4.5,*/}
+        {/*                    width: SPACING * 4.5,*/}
+        {/*                    justifyContent: "center",*/}
+        {/*                    alignItems: "center",*/}
+        {/*                }}*/}
+        {/*                onPress={() => navigation.goBack()}*/}
+        {/*            >*/}
+        {/*                <BackSvg height={25} width={25} fill="blue"/>*/}
+        {/*            </TouchableOpacity>*/}
+        {/*        </ImageBackground>*/}
+        {/*        <ImageBackground*/}
+        {/*            style={{*/}
+        {/*                padding: SPACING * 2,*/}
+        {/*                height: height / 2.5,*/}
+        {/*                // padding: SPACING * 2,*/}
+        {/*                paddingTop: SPACING * 4,*/}
+        {/*                flexDirection: "row",*/}
+        {/*                justifyContent: "space-between",*/}
+        {/*            }}*/}
+        {/*            source={require('../assets/restaurant/anna-pelzer-IGfIGP5ONV0-unsplash.jpeg')}*/}
+        {/*        >*/}
+        {/*            <TouchableOpacity*/}
+        {/*                style={{*/}
+        {/*                    height: SPACING * 4.5,*/}
+        {/*                    width: SPACING * 4.5,*/}
+        {/*                    justifyContent: "center",*/}
+        {/*                    alignItems: "center",*/}
+        {/*                }}*/}
+        {/*                onPress={() => navigation.goBack()}*/}
+        {/*            >*/}
+        {/*                <BackSvg height={25} width={25} fill="blue"/>*/}
+        {/*            </TouchableOpacity>*/}
+        {/*        </ImageBackground>*/}
+        {/*    </ScrollView>*/}
+        {/*</View>*/}
       <ScrollView>
         <View>
-          <ImageBackground
-            style={{
-              padding: SPACING * 2,
-              height: height / 2.5,
-              // padding: SPACING * 2,
-              paddingTop: SPACING * 4,
-              flexDirection: "row",
-              justifyContent: "space-between",
-            }}
-            source={recipe?.img}
-          >
-            <TouchableOpacity
-              style={{
-                height: SPACING * 4.5,
-                width: SPACING * 4.5,
-                backgroundColor: colors.white,
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: SPACING * 2.5,
-              }}
-            >
-              {/*<Ionicons*/}
-              {/*  name="arrow-back"*/}
-              {/*  size={SPACING * 2.5}*/}
-              {/*  color={colors.gray}*/}
-              {/*/>*/}
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                height: SPACING * 4.5,
-                width: SPACING * 4.5,
-                backgroundColor: colors.white,
-                justifyContent: "center",
-                alignItems: "center",
-                borderRadius: SPACING * 2.5,
-              }}
-            >
-              {/*<Ionicons name="share" size={SPACING * 2.5} color={colors.gray} />*/}
-            </TouchableOpacity>
-          </ImageBackground>
+            <View style={styles.container}>
+                <SwiperFlatList autoplay autoplayDelay={10} autoplayLoop index={2} showPagination>
+                    <View style={[styles.child, {backgroundColor: 'tomato'}]}>
+                        <ImageBackground
+                            style={{
+                                padding: SPACING * 2,
+                                height: height / 2.5,
+                                // padding: SPACING * 2,
+                                paddingTop: SPACING * 4,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                            }}
+                            source={require('../assets/restaurant/brooke-lark-jUPOXXRNdcA-unsplash.jpeg')}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    height: SPACING * 4.5,
+                                    width: SPACING * 4.5,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                                onPress={() => navigation.goBack()}
+                            >
+                                <BackSvg height={25} width={25} fill="blue"/>
+                            </TouchableOpacity>
+                        </ImageBackground>
+                    </View>
+                    <View style={[styles.child, {backgroundColor: 'thistle'}]}>
+                        <ImageBackground
+                            style={{
+                                padding: SPACING * 2,
+                                height: height / 2.5,
+                                // padding: SPACING * 2,
+                                paddingTop: SPACING * 4,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                            }}
+                            source={require('../assets/restaurant/brooke-lark-jUPOXXRNdcA-unsplash.jpeg')}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    height: SPACING * 4.5,
+                                    width: SPACING * 4.5,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                                onPress={() => navigation.goBack()}
+                            >
+                                <BackSvg height={25} width={25} fill="blue"/>
+                            </TouchableOpacity>
+                        </ImageBackground>
+                    </View>
+                    <View style={[styles.child, {backgroundColor: 'skyblue'}]}>
+                        <ImageBackground
+                            style={{
+                                padding: SPACING * 2,
+                                height: height / 2.5,
+                                // padding: SPACING * 2,
+                                paddingTop: SPACING * 4,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                            }}
+                            source={require('../assets/restaurant/brooke-lark-jUPOXXRNdcA-unsplash.jpeg')}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    height: SPACING * 4.5,
+                                    width: SPACING * 4.5,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                                onPress={() => navigation.goBack()}
+                            >
+                                <BackSvg height={25} width={25} fill="blue"/>
+                            </TouchableOpacity>
+                        </ImageBackground>
+                    </View>
+                    <View style={[styles.child, {backgroundColor: 'teal'}]}>
+                        <ImageBackground
+                            style={{
+                                padding: SPACING * 2,
+                                height: height / 2.5,
+                                // padding: SPACING * 2,
+                                paddingTop: SPACING * 4,
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                            }}
+                            source={require('../assets/restaurant/brooke-lark-jUPOXXRNdcA-unsplash.jpeg')}
+                        >
+                            <TouchableOpacity
+                                style={{
+                                    height: SPACING * 4.5,
+                                    width: SPACING * 4.5,
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                                onPress={() => navigation.goBack()}
+                            >
+                                <BackSvg height={25} width={25} fill="blue"/>
+                            </TouchableOpacity>
+                        </ImageBackground>
+                    </View>
+                </SwiperFlatList>
+            </View>
+            {/*<TouchableOpacity*/}
+            {/*  style={{*/}
+            {/*    height: SPACING * 4.5,*/}
+            {/*    width: SPACING * 4.5,*/}
+            {/*    // backgroundColor: colors.white,*/}
+            {/*    justifyContent: "center",*/}
+            {/*    alignItems: "center",*/}
+            {/*    // borderRadius: SPACING * 2.5,*/}
+            {/*  }}*/}
+            {/*  onPress={() => navigation.goBack()}*/}
+            {/*>*/}
+            {/*<BackSvg height={25} width={25} fill="blue" />*/}
+            {/*</TouchableOpacity>*/}
+            {/*<TouchableOpacity*/}
+            {/*  style={{*/}
+            {/*    height: SPACING * 4.5,*/}
+            {/*    width: SPACING * 4.5,*/}
+            {/*    backgroundColor: colors.white,*/}
+            {/*    justifyContent: "center",*/}
+            {/*    alignItems: "center",*/}
+            {/*    borderRadius: SPACING * 2.5,*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  /!*<Ionicons name="share" size={SPACING * 2.5} color={colors.gray} />*!/*/}
+            {/*</TouchableOpacity>*/}
+          {/*</ImageBackground>*/}
           <View
             style={{
               padding: SPACING * 2,
-              paddingTop: SPACING * 3,
-              marginTop: -SPACING * 3,
+              paddingTop: SPACING * 4,
+              marginTop: -SPACING * 0.1,
               borderTopLeftRadius: SPACING * 3,
               borderTopRightRadius: SPACING * 3,
               backgroundColor: colors.white,
@@ -265,45 +410,16 @@ const RecipeDetailScreen = ({ route }) => {
           </View>
         </View>
       </ScrollView>
-      <SafeAreaView>
-        <View style={{ padding: SPACING * 2 }}>
-          <TouchableOpacity
-            style={{
-              width: "100%",
-              padding: SPACING * 2,
-              backgroundColor: colors.black,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: SPACING * 2,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: SPACING * 2,
-                color: colors.white,
-                fontWeight: "700",
-              }}
-            >
-              Choose this for
-            </Text>
-            <Text
-              style={{
-                fontSize: SPACING * 2,
-                color: colors.yellow,
-                fontWeight: "700",
-                marginLeft: SPACING / 2,
-              }}
-            >
-              $ {recipe?.price}
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
     </>
   );
 };
 
-export default RecipeDetailScreen;
+const { width } = Dimensions.get('window');
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    container: {backgroundColor: 'white' },
+    child: { width, justifyContent: 'center' },
+    text: { fontSize: width * 0.5, textAlign: 'center' },
+});
+
+export default RecipeDetailScreen;
