@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1010852837570",
+    "project_id": "nangtho-2d498",
+    "storage_bucket": "nangtho-2d498.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1010852837570:android:a1d88709acaf333309e35b",
+        "android_client_info": {
+          "package_name": "com.nangtho"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1010852837570-lbial2j4crg4qhs2udohcoorn75hg7ce.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB_Np2QFekRJ6gbwa2EA8rwsB6GO18J--E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1010852837570-lbial2j4crg4qhs2udohcoorn75hg7ce.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

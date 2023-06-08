@@ -1,12 +1,12 @@
 import {
-  Dimensions,
-  ImageBackground,
-  SafeAreaView,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
+    Dimensions, Image,
+    ImageBackground,
+    SafeAreaView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from "react-native";
 import React from "react";
 
@@ -78,7 +78,7 @@ const RecipeDetailScreen = ({ route, navigation }) => {
       <ScrollView>
         <View>
             <View style={styles.container}>
-                <SwiperFlatList autoplay autoplayDelay={10} autoplayLoop index={2} showPagination>
+                <SwiperFlatList autoplay autoplayDelay={10} autoplayLoop index={0} showPagination>
                     <View style={[styles.child, {backgroundColor: 'tomato'}]}>
                         <ImageBackground
                             style={{
@@ -89,7 +89,7 @@ const RecipeDetailScreen = ({ route, navigation }) => {
                                 flexDirection: "row",
                                 justifyContent: "space-between",
                             }}
-                            source={require('../assets/restaurant/brooke-lark-jUPOXXRNdcA-unsplash.jpeg')}
+                            source={recipe.image}
                         >
                             <TouchableOpacity
                                 style={{

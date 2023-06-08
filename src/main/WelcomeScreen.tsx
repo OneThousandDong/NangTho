@@ -5,12 +5,21 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import colors from "../config/Restaurant/colors";
 import SPACING from "../config/SPACING";
-
+// import firestore from '@react-native-firebase/firestore';
 const WelcomeScreen = ({navigation}) => {
-  return (
+    // useEffect(() => {
+    //     reload()
+    // }, [])
+    //
+    // const reload = async () => {
+    //     const user = await firestore().collection('Image').doc('f0x3UYRpKGdi5RDHxE7T').get();
+    //     console.log(user)
+    // }
+
+    return (
     <ImageBackground
       style={{ flex: 1 }}
       source={require("../assets/pexels-william-choquette-2641886.jpeg")}
