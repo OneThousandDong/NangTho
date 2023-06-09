@@ -39,7 +39,7 @@ const HomeScreen = ({navigation}) => {
                 // console.log('Total users: ', querySnapshot.size);
                 querySnapshot.forEach(documentSnapshot => {
                     // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-                    const sli deImage = Object.values(documentSnapshot.data()).slice(1);
+                    const slideImage = Object.values(documentSnapshot.data()).slice(1);
                     const data: Collection = {
                         link: Object.values(documentSnapshot.data())[0],
                         image: slideImage,
