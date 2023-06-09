@@ -15,14 +15,19 @@ import SPACING from "../config/SPACING";
 import colors from "../config/Restaurant/colors";
 import DATA from "../config/Restaurant/DATA";
 import RecipeDetailScreen from "./RecipeDetailScreen";
+import { Gallery } from "../model/image";
+import { Collection } from "../model/collection";
 
 const {width} = Dimensions.get("window");
 
 const ITEM_WIDTH = width / 2 - SPACING * 3;
 
 const HomeScreen = ({navigation}) => {
+    const [collection, setCollection] = useState<Collection[]>([]);
+    const [gallery, setGallery] = useState<Gallery[]>([]);
+
     useEffect(() => {
-        reload()
+        reload();
     }, [])
     const reload = async () => {
         // const user = await firestore().collection('Image').doc('Anh1').get();
@@ -31,10 +36,16 @@ const HomeScreen = ({navigation}) => {
             .collection('Image')
             .get()
             .then(querySnapshot => {
-                console.log('Total users: ', querySnapshot.size);
-
+                // console.log('Total users: ', querySnapshot.size);
                 querySnapshot.forEach(documentSnapshot => {
-                    console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+                    // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+                    const sli deImage = Object.values(documentSnapshot.data()).slice(1);
+                    const data: Collection = {
+                        link: Object.values(documentSnapshot.data())[0],
+                        image: slideImage,
+                    }
+                    setCollection(value => [...value, data])
+                    console.log(data)
                 });
             });
     }
@@ -144,10 +155,11 @@ const HomeScreen = ({navigation}) => {
                             marginVertical: SPACING * 2,
                         }}
                     >
-                        {DATA[activeCategory].recipes.map((item, index) => (
+                        {/*{DATA[activeCategory].recipes.map((item, index) => (*/}
+                        {collection.map((item, index) => (
                             <TouchableOpacity
                                 style={{width: ITEM_WIDTH, marginBottom: SPACING * 2}}
-                                key={item.id}
+                                key={index}
                                 onPress={() => navigation.navigate('Item', {recipe: item})}
                             >
                                 <Image
@@ -156,7 +168,7 @@ const HomeScreen = ({navigation}) => {
                                         height: ITEM_WIDTH + SPACING * 3,
                                         borderRadius: SPACING * 2,
                                     }}
-                                    source={item.image}
+                                    source={{uri: item.link}}
                                 />
                                 <Text
                                     style={{
@@ -165,20 +177,21 @@ const HomeScreen = ({navigation}) => {
                                         marginTop: SPACING,
                                     }}
                                 >
-                                    {item.name}
+                                    {/*{item.name}*/}
+                                    Hi
                                 </Text>
-                                <Text
-                                    style={{
-                                        fontSize: SPACING * 1.5,
-                                        color: colors.gray,
-                                        marginVertical: SPACING / 2,
-                                    }}
-                                >
-                                    Today discount {item.discount}
-                                </Text>
-                                <Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>
-                                    $ {item.price}
-                                </Text>
+                                {/*<Text*/}
+                                {/*    style={{*/}
+                                {/*        fontSize: SPACING * 1.5,*/}
+                                {/*        color: colors.gray,*/}
+                                {/*        marginVertical: SPACING / 2,*/}
+                                {/*    }}*/}
+                                {/*>*/}
+                                {/*    Today discount {item.discount}*/}
+                                {/*</Text>*/}
+                                {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
+                                {/*    $ {item.price}*/}
+                                {/*</Text>*/}
                             </TouchableOpacity>
                         ))}
                     </View>

@@ -89,7 +89,8 @@ const RecipeDetailScreen = ({ route, navigation }) => {
                                 flexDirection: "row",
                                 justifyContent: "space-between",
                             }}
-                            source={recipe.image}
+                            // source={recipe.image}
+                            source={{uri: recipe.link}}
                         >
                             <TouchableOpacity
                                 style={{
@@ -207,207 +208,187 @@ const RecipeDetailScreen = ({ route, navigation }) => {
             {/*  /!*<Ionicons name="share" size={SPACING * 2.5} color={colors.gray} />*!/*/}
             {/*</TouchableOpacity>*/}
           {/*</ImageBackground>*/}
-          <View
-            style={{
-              padding: SPACING * 2,
-              paddingTop: SPACING * 4,
-              marginTop: -SPACING * 0.1,
-              borderTopLeftRadius: SPACING * 3,
-              borderTopRightRadius: SPACING * 3,
-              backgroundColor: colors.white,
-            }}
-          >
-            <View
-              style={{
-                flexDirection: "row",
-                marginBottom: SPACING * 3,
-                alignItems: "center",
-              }}
-            >
-              <View style={{ width: "70%" }}>
-                <Text
-                  style={{
-                    fontSize: SPACING * 3,
-                    color: colors.black,
-                    fontWeight: "700",
-                  }}
-                >
-                  {recipe?.name}
-                </Text>
-              </View>
-              <View
-                style={{
-                  padding: SPACING,
-                  paddingHorizontal: SPACING * 3,
-                  backgroundColor: colors.yellow,
-                  flexDirection: "row",
-                  borderRadius: SPACING,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {/*<Ionicons*/}
-                {/*  name="star"*/}
-                {/*  color={colors.black}*/}
-                {/*  size={SPACING * 1.7}*/}
-                {/*/>*/}
-                <Text
-                  style={{
-                    fontSize: SPACING * 1.6,
-                    fontWeight: "600",
-                    marginLeft: SPACING / 2,
-                    color: colors.black,
-                  }}
-                >
-                  {recipe?.rating}
-                </Text>
-              </View>
-            </View>
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <View
-                style={{
-                  padding: SPACING,
-                  paddingHorizontal: SPACING * 2,
-                  backgroundColor: colors.light,
-                  flexDirection: "row",
-                  borderRadius: SPACING,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {/*<Ionicons*/}
-                {/*  name="time"*/}
-                {/*  color={colors.gray}*/}
-                {/*  size={SPACING * 1.7}*/}
-                {/*/>*/}
-                <Text
-                  style={{
-                    fontSize: SPACING * 1.6,
-                    fontWeight: "600",
-                    marginLeft: SPACING / 2,
-                    color: colors.gray,
-                  }}
-                >
-                  {recipe?.time}
-                </Text>
-              </View>
-              <View
-                style={{
-                  padding: SPACING,
-                  paddingHorizontal: SPACING * 2,
-                  backgroundColor: colors.light,
-                  flexDirection: "row",
-                  borderRadius: SPACING,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {/*<Ionicons*/}
-                {/*  name="bicycle"*/}
-                {/*  color={colors.gray}*/}
-                {/*  size={SPACING * 1.7}*/}
-                {/*/>*/}
-                <Text
-                  style={{
-                    fontSize: SPACING * 1.6,
-                    fontWeight: "600",
-                    marginLeft: SPACING / 2,
-                    color: colors.gray,
-                  }}
-                >
-                  {recipe?.del_time}
-                </Text>
-              </View>
-              <View
-                style={{
-                  padding: SPACING,
-                  paddingHorizontal: SPACING * 2,
-                  backgroundColor: colors.light,
-                  flexDirection: "row",
-                  borderRadius: SPACING,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                {/*<Ionicons*/}
-                {/*  name="restaurant"*/}
-                {/*  color={colors.gray}*/}
-                {/*  size={SPACING * 1.7}*/}
-                {/*/>*/}
-                <Text
-                  style={{
-                    fontSize: SPACING * 1.6,
-                    fontWeight: "600",
-                    marginLeft: SPACING / 2,
-                    color: colors.gray,
-                  }}
-                >
-                  {recipe?.cooking_time}
-                </Text>
-              </View>
-            </View>
-            <View style={{ marginVertical: SPACING * 3 }}>
-              <Text
-                style={{
-                  fontSize: SPACING * 2,
-                  fontWeight: "700",
-                  color: colors.dark,
-                }}
-              >
-                Ingredients
-              </Text>
-              {recipe?.ingredients.map((ingredient) => (
-                <View
-                  style={{
-                    marginVertical: SPACING,
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                  key={ingredient.id}
-                >
-                  <View
-                    style={{
-                      width: SPACING,
-                      height: SPACING,
-                      backgroundColor: colors.light,
-                      borderRadius: SPACING,
-                    }}
-                  />
-                  <Text
-                    style={{
-                      fontSize: SPACING * 1.7,
-                      fontWeight: "600",
-                      color: colors.gray,
-                      marginLeft: SPACING,
-                    }}
-                  >
-                    {ingredient.title}
-                  </Text>
-                </View>
-              ))}
-            </View>
-            <Text
-              style={{
-                fontSize: SPACING * 2,
-                fontWeight: "700",
-                color: colors.dark,
-                marginBottom: SPACING,
-              }}
-            >
-              Description
-            </Text>
-            <Text
-              style={{
-                fontSize: SPACING * 1.7,
-                fontWeight: "500",
-                color: colors.gray,
-              }}
-            >
-              {recipe?.description}
-            </Text>
-          </View>
+          {/*<View*/}
+          {/*  style={{*/}
+          {/*    padding: SPACING * 2,*/}
+          {/*    paddingTop: SPACING * 4,*/}
+          {/*    marginTop: -SPACING * 0.1,*/}
+          {/*    borderTopLeftRadius: SPACING * 3,*/}
+          {/*    borderTopRightRadius: SPACING * 3,*/}
+          {/*    backgroundColor: colors.white,*/}
+          {/*  }}*/}
+          {/*>*/}
+          {/*  <View*/}
+          {/*    style={{*/}
+          {/*      flexDirection: "row",*/}
+          {/*      marginBottom: SPACING * 3,*/}
+          {/*      alignItems: "center",*/}
+          {/*    }}*/}
+          {/*  >*/}
+          {/*    <View style={{ width: "70%" }}>*/}
+          {/*      <Text*/}
+          {/*        style={{*/}
+          {/*          fontSize: SPACING * 3,*/}
+          {/*          color: colors.black,*/}
+          {/*          fontWeight: "700",*/}
+          {/*        }}*/}
+          {/*      >*/}
+          {/*        {recipe?.name}*/}
+          {/*      </Text>*/}
+          {/*    </View>*/}
+          {/*    <View*/}
+          {/*      style={{*/}
+          {/*        padding: SPACING,*/}
+          {/*        paddingHorizontal: SPACING * 3,*/}
+          {/*        backgroundColor: colors.yellow,*/}
+          {/*        flexDirection: "row",*/}
+          {/*        borderRadius: SPACING,*/}
+          {/*        justifyContent: "center",*/}
+          {/*        alignItems: "center",*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      <Text*/}
+          {/*        style={{*/}
+          {/*          fontSize: SPACING * 1.6,*/}
+          {/*          fontWeight: "600",*/}
+          {/*          marginLeft: SPACING / 2,*/}
+          {/*          color: colors.black,*/}
+          {/*        }}*/}
+          {/*      >*/}
+          {/*        {recipe?.rating}*/}
+          {/*      </Text>*/}
+          {/*    </View>*/}
+          {/*  </View>*/}
+          {/*  <View*/}
+          {/*    style={{ flexDirection: "row", justifyContent: "space-between" }}*/}
+          {/*  >*/}
+          {/*    <View*/}
+          {/*      style={{*/}
+          {/*        padding: SPACING,*/}
+          {/*        paddingHorizontal: SPACING * 2,*/}
+          {/*        backgroundColor: colors.light,*/}
+          {/*        flexDirection: "row",*/}
+          {/*        borderRadius: SPACING,*/}
+          {/*        justifyContent: "center",*/}
+          {/*        alignItems: "center",*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      <Text*/}
+          {/*        style={{*/}
+          {/*          fontSize: SPACING * 1.6,*/}
+          {/*          fontWeight: "600",*/}
+          {/*          marginLeft: SPACING / 2,*/}
+          {/*          color: colors.gray,*/}
+          {/*        }}*/}
+          {/*      >*/}
+          {/*        {recipe?.time}*/}
+          {/*      </Text>*/}
+          {/*    </View>*/}
+          {/*    <View*/}
+          {/*      style={{*/}
+          {/*        padding: SPACING,*/}
+          {/*        paddingHorizontal: SPACING * 2,*/}
+          {/*        backgroundColor: colors.light,*/}
+          {/*        flexDirection: "row",*/}
+          {/*        borderRadius: SPACING,*/}
+          {/*        justifyContent: "center",*/}
+          {/*        alignItems: "center",*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      <Text*/}
+          {/*        style={{*/}
+          {/*          fontSize: SPACING * 1.6,*/}
+          {/*          fontWeight: "600",*/}
+          {/*          marginLeft: SPACING / 2,*/}
+          {/*          color: colors.gray,*/}
+          {/*        }}*/}
+          {/*      >*/}
+          {/*        {recipe?.del_time}*/}
+          {/*      </Text>*/}
+          {/*    </View>*/}
+          {/*    <View*/}
+          {/*      style={{*/}
+          {/*        padding: SPACING,*/}
+          {/*        paddingHorizontal: SPACING * 2,*/}
+          {/*        backgroundColor: colors.light,*/}
+          {/*        flexDirection: "row",*/}
+          {/*        borderRadius: SPACING,*/}
+          {/*        justifyContent: "center",*/}
+          {/*        alignItems: "center",*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      <Text*/}
+          {/*        style={{*/}
+          {/*          fontSize: SPACING * 1.6,*/}
+          {/*          fontWeight: "600",*/}
+          {/*          marginLeft: SPACING / 2,*/}
+          {/*          color: colors.gray,*/}
+          {/*        }}*/}
+          {/*      >*/}
+          {/*        {recipe?.cooking_time}*/}
+          {/*      </Text>*/}
+          {/*    </View>*/}
+          {/*  </View>*/}
+          {/*  <View style={{ marginVertical: SPACING * 3 }}>*/}
+          {/*    <Text*/}
+          {/*      style={{*/}
+          {/*        fontSize: SPACING * 2,*/}
+          {/*        fontWeight: "700",*/}
+          {/*        color: colors.dark,*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      Ingredients*/}
+          {/*    </Text>*/}
+          {/*    {recipe?.ingredients.map((ingredient) => (*/}
+          {/*      <View*/}
+          {/*        style={{*/}
+          {/*          marginVertical: SPACING,*/}
+          {/*          flexDirection: "row",*/}
+          {/*          alignItems: "center",*/}
+          {/*        }}*/}
+          {/*        key={ingredient.id}*/}
+          {/*      >*/}
+          {/*        <View*/}
+          {/*          style={{*/}
+          {/*            width: SPACING,*/}
+          {/*            height: SPACING,*/}
+          {/*            backgroundColor: colors.light,*/}
+          {/*            borderRadius: SPACING,*/}
+          {/*          }}*/}
+          {/*        />*/}
+          {/*        <Text*/}
+          {/*          style={{*/}
+          {/*            fontSize: SPACING * 1.7,*/}
+          {/*            fontWeight: "600",*/}
+          {/*            color: colors.gray,*/}
+          {/*            marginLeft: SPACING,*/}
+          {/*          }}*/}
+          {/*        >*/}
+          {/*          {ingredient.title}*/}
+          {/*        </Text>*/}
+          {/*      </View>*/}
+          {/*    ))}*/}
+          {/*  </View>*/}
+          {/*  <Text*/}
+          {/*    style={{*/}
+          {/*      fontSize: SPACING * 2,*/}
+          {/*      fontWeight: "700",*/}
+          {/*      color: colors.dark,*/}
+          {/*      marginBottom: SPACING,*/}
+          {/*    }}*/}
+          {/*  >*/}
+          {/*    Description*/}
+          {/*  </Text>*/}
+          {/*  <Text*/}
+          {/*    style={{*/}
+          {/*      fontSize: SPACING * 1.7,*/}
+          {/*      fontWeight: "500",*/}
+          {/*      color: colors.gray,*/}
+          {/*    }}*/}
+          {/*  >*/}
+          {/*    {recipe?.description}*/}
+          {/*  </Text>*/}
+          {/*</View>*/}
         </View>
       </ScrollView>
     </>
