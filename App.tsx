@@ -20,7 +20,7 @@ const App = (): React.ReactElement => {
                     screenOptions={{
                     headerShown: false
                     }}>
-                    <Stack.Screen name="Welcome" component={WelcomeScreen} />
+                    {/* <Stack.Screen name="Welcome" component={WelcomeScreen} /> */}
                     <Stack.Screen name="Home" component={HomeScreen} />
                     <Stack.Screen name="Item" component={RecipeDetailScreen} />
                 </Stack.Navigator>

@@ -45,7 +45,7 @@ const HomeScreen = ({navigation}) => {
                         image: slideImage,
                     }
                     setCollection(value => [...value, data])
-                    console.log(data)
+                    // console.log(data)
                 });
             });
     }

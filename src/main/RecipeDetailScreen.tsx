@@ -20,6 +20,7 @@ import { SwiperFlatList } from 'react-native-swiper-flatlist';
 
 const RecipeDetailScreen = ({ route, navigation }) => {
   const {recipe} = route.params;
+  
   return (
     <>
         {/*<View style={{flexDirection: 'row', width: '100%'}}>*/}
@@ -79,6 +80,7 @@ const RecipeDetailScreen = ({ route, navigation }) => {
         <View>
             <View style={styles.container}>
                 <SwiperFlatList autoplay autoplayDelay={10} autoplayLoop index={0} showPagination>
+                {recipe?.image.map((item, index) => (
                     <View style={[styles.child, {backgroundColor: 'tomato'}]}>
                         <ImageBackground
                             style={{
@@ -90,7 +92,7 @@ const RecipeDetailScreen = ({ route, navigation }) => {
                                 justifyContent: "space-between",
                             }}
                             // source={recipe.image}
-                            source={{uri: recipe.link}}
+                            source={{uri: item}}
                         >
                             <TouchableOpacity
                                 style={{
@@ -104,8 +106,10 @@ const RecipeDetailScreen = ({ route, navigation }) => {
                                 <BackSvg height={25} width={25} fill="blue"/>
                             </TouchableOpacity>
                         </ImageBackground>
-                    </View>
-                    <View style={[styles.child, {backgroundColor: 'thistle'}]}>
+                    </View>        
+                ))}
+                    
+                    {/*<View style={[styles.child, {backgroundColor: 'thistle'}]}>
                         <ImageBackground
                             style={{
                                 padding: SPACING * 2,
@@ -179,7 +183,7 @@ const RecipeDetailScreen = ({ route, navigation }) => {
                                 <BackSvg height={25} width={25} fill="blue"/>
                             </TouchableOpacity>
                         </ImageBackground>
-                    </View>
+                            </View>*/}
                 </SwiperFlatList>
             </View>
             {/*<TouchableOpacity*/}
