@@ -16,7 +16,7 @@ import colors from "../config/Restaurant/colors";
 import { Gallery } from "../model/image";
 import { Collection } from "../model/collection";
 import { RNLauncherKitHelper } from 'react-native-launcher-kit';
-import TrackPlayer, {Capability} from 'react-native-track-player';
+import TrackPlayer, {Capability, usePlaybackState, useProgress, State} from 'react-native-track-player';
 import { Music } from "../model/music";
 
 const {width} = Dimensions.get("window");
@@ -29,6 +29,7 @@ const HomeScreen = ({navigation}) => {
     const [isEnableInput, setIsEnableInput] = useState(false);
     const [percentBattery, setPercentBattery] = useState(0);
     const [isCharging, setIsCharging] = useState(false);
+    const playbackState = usePlaybackState();
 
     useEffect(() => {
         // reload();
@@ -62,6 +63,15 @@ const HomeScreen = ({navigation}) => {
         } catch (e) {
         }
     }
+    const togglePlayback = async playbackState => {
+        console.log(playbackState);
+        
+        if (playbackState === State.Paused || playbackState === State.Ready) {
+            await TrackPlayer.play();
+        } else {
+            await TrackPlayer.pause();
+        }
+    }
     const reload = async () => {
         // const user = await firestore().collection('Image').doc('Anh1').get();
         // console.log(user)
@@ -92,8 +102,10 @@ const HomeScreen = ({navigation}) => {
                     >
                         <TouchableOpacity
                             onPress={async () => {
-                              await TrackPlayer.skip(1);
-                              await TrackPlayer.play();
+                            //   await TrackPlayer.skip(1);
+                            //   await TrackPlayer.play();
+                                // togglePlayback(playbackState)
+                                TrackPlayer.play();
                             }}
                         >
                             <Image
