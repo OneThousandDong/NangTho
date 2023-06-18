@@ -34,7 +34,7 @@ const HomeScreen = ({navigation}) => {
     useEffect(() => {
         // reload();
         initData();
-        setupPlayer();
+        // setupPlayer();
     }, [])
     const initData = async () => {
         const result = await RNLauncherKitHelper.getBatteryStatus();
@@ -59,7 +59,7 @@ const HomeScreen = ({navigation}) => {
 
                 // Icons for the notification on Android (if you don't like the default ones)
             });
-            await TrackPlayer.add(Music);
+            await TrackPlayer.add([{url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}]);
         } catch (e) {
         }
     }

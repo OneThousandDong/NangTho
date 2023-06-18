@@ -18,8 +18,9 @@ import SettingSvg from "../assets/ic_setting.svg";
 import BackSvg from "../assets/ic_back.svg";
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import DocumentPicker from 'react-native-document-picker'
-import TrackPlayer, {Capability, usePlaybackState, useProgress, State} from 'react-native-track-player';
+import TrackPlayer, {Capability, usePlaybackState, useProgress, State, AppKilledPlaybackBehavior} from 'react-native-track-player';
 import { Music } from "../model/music";
+// import { setupPlayer, addTracks } from '../config/trackPlayerServices';
 
 
 const InputCharger = ({ route, navigation }) => {
@@ -33,17 +34,32 @@ const InputCharger = ({ route, navigation }) => {
             console.log(response);
             
             setFileResponse(response);
+            // setupPlayer(response?.uri)
         } catch (error) {
             console.warn(error);
         }
     }, []);
 
+    // const [isPlayerReady, setIsPlayerReady] = useState(false);
+
+    // useEffect(() => {
+    //     async function setup() {
+    //     let isSetup = await setupPlayer();
+
+    //     const queue = await TrackPlayer.getQueue();
+    //     if(isSetup && queue.length <= 0) {
+    //         await addTracks();
+    //     }
+
+    //     setIsPlayerReady(isSetup);
+    //     }
+
+    //     setup();
+    // }, []);
+
     useEffect(() => {
         setupPlayer();
     }, [])
-    useEffect(() => {
-        setupPlayer();
-    }, [fileResponse])
     const setupPlayer = async () => {
         try {
             console.log('Hiii');
@@ -65,25 +81,74 @@ const InputCharger = ({ route, navigation }) => {
             // if (fileResponse?.length > 0) {
             //     await TrackPlayer.add([require(fileResponse[0]?.uri)]);
             // }
-            if (fileResponse?.length > 0) {
-                await TrackPlayer.add(Music);
-            }
+            // if (fileResponse?.length > 0) {
+                await TrackPlayer.add([{url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}]);
+            // }
         } catch (e) {
         }
     }
 
+    // const setupPlayer = async () => {
+    //     let isSetup = false;
+    //     try {
+    //       await TrackPlayer.getCurrentTrack();
+    //       isSetup = true;
+    //     }
+    //     catch {
+    //       await TrackPlayer.setupPlayer();
+    //       await TrackPlayer.updateOptions({
+    //         android: {
+    //           appKilledPlaybackBehavior:
+    //             AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+    //         },
+    //         capabilities: [
+    //           Capability.Play,
+    //           Capability.Pause,
+    //           Capability.SkipToNext,
+    //           Capability.SkipToPrevious,
+    //           Capability.SeekTo,
+    //         ],
+    //         compactCapabilities: [
+    //           Capability.Play,
+    //           Capability.Pause,
+    //           Capability.SkipToNext,
+    //         ],
+    //         progressUpdateEventInterval: 2,
+    //       });
+      
+    //       isSetup = true;
+    //     }
+    //     finally {
+    //       return isSetup;
+    //     }
+    // }
+
+    // const addTracks = async () => {[
+    //     {
+    //       id: '1',
+    //       url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    //       title: 'Fluidity',
+    //       artist: 'tobylane',
+    //       duration: 60,
+    //     }
+    //   ]
+    // }
+
+    const playbackService = async () => {
+
+    }
     return (
         <>
-        {fileResponse.map((file, index) => (
-        <Text
-          key={index.toString()}
-          numberOfLines={1}
-          ellipsizeMode={'middle'}>
-          {file?.uri}
-        </Text>
-      ))}
-      <Button title="Select 📑" onPress={handleDocumentSelection} />
-            <ScrollView>
+            {fileResponse.map((file, index) => (
+            <Text
+            key={index.toString()}
+            numberOfLines={1}
+            ellipsizeMode={'middle'}>
+            {file?.uri}
+            </Text>
+        ))}
+            <Button title="Select 📑" onPress={handleDocumentSelection} />
+                <ScrollView>
                 <View>
                     <View style={styles.container}>
                         <SwiperFlatList autoplay autoplayDelay={10} autoplayLoop index={0} showPagination>
@@ -191,8 +256,8 @@ const InputCharger = ({ route, navigation }) => {
                         </SwiperFlatList>
                     </View>
                 </View>
-            </ScrollView>
-
+                </ScrollView>
+            <Button title="Play" onPress={() => TrackPlayer.play()} />
         </>
     );
 };
