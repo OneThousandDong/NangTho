@@ -34,43 +34,11 @@ const HomeScreen = ({navigation}) => {
     useEffect(() => {
         // reload();
         initData();
-        // setupPlayer();
     }, [])
     const initData = async () => {
         const result = await RNLauncherKitHelper.getBatteryStatus();
         setPercentBattery(result?.level);
         setIsCharging(result?.isCharging);
-    }
-    const setupPlayer = async () => {
-        try {
-            await TrackPlayer.setupPlayer();
-            await TrackPlayer.updateOptions({
-                // Media controls capabilities
-                capabilities: [
-                    Capability.Play,
-                    Capability.Pause,
-                    Capability.SkipToNext,
-                    Capability.SkipToPrevious,
-                    Capability.Stop,
-                ],
-
-                // Capabilities that will show up when the notification is in the compact form on Android
-                compactCapabilities: [Capability.Play, Capability.Pause],
-
-                // Icons for the notification on Android (if you don't like the default ones)
-            });
-            await TrackPlayer.add([{url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"}]);
-        } catch (e) {
-        }
-    }
-    const togglePlayback = async playbackState => {
-        console.log(playbackState);
-        
-        if (playbackState === State.Paused || playbackState === State.Ready) {
-            await TrackPlayer.play();
-        } else {
-            await TrackPlayer.pause();
-        }
     }
     const reload = async () => {
         // const user = await firestore().collection('Image').doc('Anh1').get();
@@ -100,24 +68,6 @@ const HomeScreen = ({navigation}) => {
                     <View
                         style={{flexDirection: "row", justifyContent: "space-between"}}
                     >
-                        <TouchableOpacity
-                            onPress={async () => {
-                            //   await TrackPlayer.skip(1);
-                            //   await TrackPlayer.play();
-                                // togglePlayback(playbackState)
-                                TrackPlayer.play();
-                            }}
-                        >
-                            <Image
-                                style={{
-                                    width: SPACING * 4.5,
-                                    height: SPACING * 4.5,
-                                    borderRadius: SPACING * 3,
-                                    marginRight: SPACING,
-                                }}
-                                source={require("../assets/restaurant/avatar.jpg")}
-                            />
-                        </TouchableOpacity>
                         <View style={{flexDirection: "row", alignItems: "center"}}>
                             <Image
                                 style={{
