@@ -11,6 +11,7 @@
     "apk": "cd android && ./gradlew clean && ./gradlew assembleRelease && cd .."
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.18.2",
     "@react-native-firebase/app": "^18.0.0",
     "@react-native-firebase/firestore": "^18.0.0",
     "@react-navigation/native": "^6.1.6",
@@ -21,6 +22,7 @@
     "npm": "^9.6.7",
     "react": "18.0.0",
     "react-native": "0.69.5",
+    "react-native-background-actions": "^3.0.0",
     "react-native-document-picker": "^9.0.1",
     "react-native-fast-image": "^8.6.3",
     "react-native-launcher-kit": "^1.0.4",

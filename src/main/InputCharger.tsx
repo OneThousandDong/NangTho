@@ -1,37 +1,34 @@
-import {
-    Button,
-    Dimensions,
-    ImageBackground,
-    ScrollView,
-    StyleSheet,
-    Text, TextInput,
-    TouchableOpacity,
-    View
-} from "react-native";
+import { Button, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
-import SPACING from "../config/SPACING";
-// import { Ionicons } from "@expo/vector-icons";
-import BackSvg from "../assets/ic_back.svg";
-import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import DocumentPicker from 'react-native-document-picker'
-import TrackPlayer, { Capability, State, usePlaybackState } from 'react-native-track-player';
+import TrackPlayer, {
+    Capability,
+    Event,
+    State,
+    usePlaybackState,
+    useTrackPlayerEvents
+} from 'react-native-track-player';
 import Sound from "../assets/ic_sound.svg";
 import Play from "../assets/ic_play.svg";
 import Pause from "../assets/ic_pause.svg";
 import Tts from "react-native-tts";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SPACING from "../config/SPACING";
+import BackSvg from "../assets/ic_back.svg";
 
 const {height} = Dimensions.get("window");
-// import { setupPlayer, addTracks } from '../config/trackPlayerServices';
 
 
 const InputCharger = ({route, navigation}) => {
+    const playbackStater = usePlaybackState();
     // const {recipe} = route.params;
     const [text, setText] = useState('');
 
     const speak = async () => {
-        Tts.setDefaultVoice('com.apple.ttsbundle.Samantha-compact');
+        console.log('Hii')
+        // Tts.setDefaultVoice('com.apple.ttsbundle.Samantha-compact');
         Tts.setDefaultLanguage('vi-VN');
-        await Tts.speak(text);
+        Tts.speak(text);
     };
     const playbackState = usePlaybackState();
     const [play, setIsPlay] = useState(0)
@@ -41,54 +38,117 @@ const InputCharger = ({route, navigation}) => {
             const response = await DocumentPicker.pick({
                 presentationStyle: 'fullScreen',
             });
-            console.log(response);
             setFileResponse(response);
-            // setupPlayer(response[0].uri)
             await TrackPlayer.reset();
-            console.log('Truoc queue')
-            console.log(await TrackPlayer.getQueue())
             await TrackPlayer.add([{url: response[0].uri}]);
-            console.log('Sau queue')
-            console.log(await TrackPlayer.getQueue())
         } catch (error) {
             console.warn(error);
         }
     }, []);
 
-    // const [isPlayerReady, setIsPlayerReady] = useState(false);
+    const storeData = async (key: string, value: string) => {
+        try {
+            await AsyncStorage.setItem(key, value);
+        } catch (e) {}
+    };
 
+    const storeDataObject = async (key: string, value: any) => {
+        try {
+            const jsonValue = JSON.stringify(value);
+            await AsyncStorage.setItem(key, jsonValue);
+        } catch (e) {
+        }
+    };
+
+    useTrackPlayerEvents([Event.PlaybackState], (event) => {
+        if (event.state == 'stopped') {
+            console.log(event.state)
+            setIsPlay(0);
+        }
+    })
+
+    const togglePlayback = async playbackStater => {
+        console.log(playbackState);
+
+        if (playbackState === State.Paused || playbackState === State.Ready
+            || playbackState === State.Stopped || playbackState === State.Connecting
+            ) {
+            await TrackPlayer.remove(0)
+            await TrackPlayer.skip(0)
+            await TrackPlayer.play();
+        } else {
+            await TrackPlayer.pause();
+        }
+    }
     // useEffect(() => {
-    //     async function setup() {
-    //     let isSetup = await setupPlayer();
-
-    //     const queue = await TrackPlayer.getQueue();
-    //     if(isSetup && queue.length <= 0) {
-    //         await addTracks();
+    //     console.log('hi')
+    //     if (playbackState === State.Stopped) {
+    //         setIsPlay(1)
     //     }
+    // }, [playbackStater])
+    const getData = useCallback(async () => {
+        try {
+            const value = await AsyncStorage.getItem('inputSpeak');
+            if (value !== null) {
+                setText(value);
+            }
+        } catch (e) {
+            // error reading value
+        }
+    }, []);
 
-    //     setIsPlayerReady(isSetup);
+    // async () => {
+    //     try {
+    //         const value = await AsyncStorage.getItem('inputSpeak');
+    //         if (value !== null) {
+    //             setText(value);
+    //         }
+    //     } catch (e) {
+    //         // error reading value
     //     }
+    // };
 
-    //     setup();
-    // }, []);
+    const getDataObject = useCallback(async () => {
+        try {
+            // await setupPlayer();
+            const jsonValue = await AsyncStorage.getItem('inputMusic');
+            if (jsonValue != null) {
+                const value = JSON.parse(jsonValue);
+                console.log(value)
+                setFileResponse([value])
+                await TrackPlayer.reset();
+                // await TrackPlayer.add([{url: "https://filesamples.com/samples/audio/mp3/Symphony%20No.6%20(1st%20movement).mp3"}]);
+                console.log(value.uri)
+                await TrackPlayer.add([{url: value.uri}]);
+            }
+        } catch (e) {
+            // error reading value
+        }
+    }, []);
 
-    // const togglePlayback = async playbackStater => {
-    //     console.log(playbackState);
-    //
-    //     if (playbackState === State.Paused || playbackState === State.Ready) {
-    //         await TrackPlayer.play();
-    //     } else {
-    //         await TrackPlayer.pause();
+    //     = async () => {
+    //     try {
+    //         const jsonValue = await AsyncStorage.getItem('inputMusic');
+    //         if (jsonValue != null) {
+    //             const value = JSON.parse(jsonValue);
+    //             console.log(value)
+    //             setFileResponse([value])
+    //             await TrackPlayer.add([{url: value.uri}]);
+    //         }
+    //     } catch (e) {
+    //         // error reading value
     //     }
-    // }
+    // };
+
 
     useEffect(() => {
         setupPlayer();
+        getData();
+        getDataObject();
     }, [])
     const setupPlayer = async () => {
-        console.log(TrackPlayer.getQueue())
         try {
-            // console.log('Hiii');
+            console.log('setupPlayer');
 
             // console.log(fileResponse);
             await TrackPlayer.setupPlayer();
@@ -111,41 +171,6 @@ const InputCharger = ({route, navigation}) => {
         }
     }
 
-    // const setupPlayer = async () => {
-    //     let isSetup = false;
-    //     try {
-    //       await TrackPlayer.getCurrentTrack();
-    //       isSetup = true;
-    //     }
-    //     catch {
-    //       await TrackPlayer.setupPlayer();
-    //       await TrackPlayer.updateOptions({
-    //         android: {
-    //           appKilledPlaybackBehavior:
-    //             AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
-    //         },
-    //         capabilities: [
-    //           Capability.Play,
-    //           Capability.Pause,
-    //           Capability.SkipToNext,
-    //           Capability.SkipToPrevious,
-    //           Capability.SeekTo,
-    //         ],
-    //         compactCapabilities: [
-    //           Capability.Play,
-    //           Capability.Pause,
-    //           Capability.SkipToNext,
-    //         ],
-    //         progressUpdateEventInterval: 2,
-    //       });
-
-    //       isSetup = true;
-    //     }
-    //     finally {
-    //       return isSetup;
-    //     }
-    // }
-
     // const addTracks = async () => {[
     //     {
     //       id: '1',
@@ -163,14 +188,28 @@ const InputCharger = ({route, navigation}) => {
     return (
         <>
             <View style={styles.container}>
-                <Text style={styles.title}>Text-to-Speech in React Native</Text>
+                <TouchableOpacity
+                    style={{
+                        height: SPACING * 4.5,
+                        width: SPACING * 4.5,
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                    onPress={() => navigation.goBack()}
+                >
+                    <BackSvg height={25} width={25} fill="blue"/>
+                </TouchableOpacity>
+                <Text style={styles.title}>Input Charger</Text>
                 <TextInput
                     style={styles.input}
                     onChangeText={setText}
                     value={text}
                     placeholder="Enter text to be spoken"
                 />
-                <Button title="Speak" onPress={speak} />
+                <Button title="Speak" onPress={async () => {
+                    await speak();
+                    await storeData("inputSpeak", text)
+                }} />
             </View>
             <Button title="Select 📑" onPress={handleDocumentSelection}/>
             {fileResponse.map((file, index) => (
@@ -189,7 +228,8 @@ const InputCharger = ({route, navigation}) => {
                     {play == 0 ? (
                         <TouchableOpacity onPress={async () => {
                             setIsPlay(1);
-                            await TrackPlayer.play();
+                            // await TrackPlayer.play();
+                            togglePlayback(playbackState)
                         }}>
                             <Play height={35} width={35}/>
                         </TouchableOpacity>
@@ -197,7 +237,8 @@ const InputCharger = ({route, navigation}) => {
                         : (
                             <TouchableOpacity onPress={async () => {
                                 setIsPlay(0)
-                                await TrackPlayer.pause();
+                                // await TrackPlayer.pause();
+                                togglePlayback(playbackState)
                             }}>
                             <Pause height={35} width={35}/>
                         </TouchableOpacity>
@@ -205,12 +246,23 @@ const InputCharger = ({route, navigation}) => {
                     }
                 </>
             ))}
-            <Button title="Play" onPress={async () => {
-                await TrackPlayer.remove(0);
-                await TrackPlayer.skip(0);
-                // togglePlayback(playbackState)
-                await TrackPlayer.play();
-                // await TrackPlayer.reset();
+            {/*<Button title="Play" onPress={async () => {*/}
+            {/*    await TrackPlayer.remove(0);*/}
+            {/*    await TrackPlayer.skip(0);*/}
+            {/*    // togglePlayback(playbackState)*/}
+            {/*    await TrackPlayer.play();*/}
+            {/*    // await TrackPlayer.reset();*/}
+            {/*}}*/}
+            {/*/>*/}
+            <Button title="Save" onPress={async () => {
+                if (fileResponse?.length > 0) {
+                    const value = {
+                        name: fileResponse[0].name,
+                        uri: fileResponse[0].uri,
+                        size: fileResponse[0].size,
+                    }
+                    await storeDataObject("inputMusic", value);
+                }
             }}
             />
         </>
