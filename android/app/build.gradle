@@ -262,6 +262,7 @@ android {
 }
 
 dependencies {
+    implementation project(':rn-fetch-blob')
     implementation platform('com.google.firebase:firebase-bom:32.1.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation fileTree(dir: "libs", include: ["*.jar"])

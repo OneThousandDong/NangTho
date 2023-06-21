@@ -4,64 +4,43 @@ import {
     ScrollView,
     StyleSheet,
     Text,
-    TextInput,
     TouchableOpacity,
     View,
     Dimensions, Switch, Button,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import firestore from '@react-native-firebase/firestore';
 import SPACING from "../config/SPACING";
 import colors from "../config/Restaurant/colors";
-import { Gallery } from "../model/image";
-import { Collection } from "../model/collection";
 import { RNLauncherKitHelper } from 'react-native-launcher-kit';
-import TrackPlayer, {Capability, usePlaybackState, useProgress, State} from 'react-native-track-player';
-import { Music } from "../model/music";
 import BackgroundService from 'react-native-background-actions';
+import { LocalStorage } from "../components/LocalStorage";
 
 const {width} = Dimensions.get("window");
 
 const ITEM_WIDTH = width / 2 - SPACING * 3;
 
 const HomeScreen = ({navigation}) => {
-    const [collection, setCollection] = useState<Collection[]>([]);
-    const [gallery, setGallery] = useState<Gallery[]>([]);
     const [isEnableInput, setIsEnableInput] = useState(false);
+    const [isEnableOutput, setIsEnableOutput] = useState(false);
+    const [isEnableMin, setIsEnableMin] = useState(false);
+    const [isEnableMax, setIsEnableMax] = useState(false);
     const [percentBattery, setPercentBattery] = useState(0);
     const [isCharging, setIsCharging] = useState(false);
-    const playbackState = usePlaybackState();
 
     useEffect(() => {
-        // reload();
         initData();
     }, [])
     const initData = async () => {
         const result = await RNLauncherKitHelper.getBatteryStatus();
         setPercentBattery(result?.level);
         setIsCharging(result?.isCharging);
+        const dataInput = await LocalStorage.getData("inputEnable");
+        if (dataInput == "1") {
+            setIsEnableInput(true);
+        } else {
+            setIsEnableInput(false);
+        }
     }
-    const reload = async () => {
-        // const user = await firestore().collection('Image').doc('Anh1').get();
-        // console.log(user)
-        firestore()
-            .collection('Image')
-            .get()
-            .then(querySnapshot => {
-                // console.log('Total users: ', querySnapshot.size);
-                querySnapshot.forEach(documentSnapshot => {
-                    // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-                    const slideImage = Object.values(documentSnapshot.data()).slice(1);
-                    const data: Collection = {
-                        link: Object.values(documentSnapshot.data())[0],
-                        image: slideImage,
-                    }
-                    setCollection(value => [...value, data])
-                    console.log(data)
-                });
-            });
-    }
-    const [activeCategory, setActiveCategory] = useState(0);
 
     const sleep = (time: any) => new Promise((resolve) => setTimeout(() => resolve(), time));
     const veryIntensiveTask = async (taskDataArguments: any) => {
@@ -101,10 +80,10 @@ const HomeScreen = ({navigation}) => {
         await BackgroundService.start(veryIntensiveTask, options);
         await BackgroundService.updateNotification({taskDesc: 'New ExampleTask description'});
     }
-
     const stopBackgroundService = async () => {
         await BackgroundService.stop();
     }
+
     return (
         <SafeAreaView>
             <ScrollView>
@@ -185,21 +164,24 @@ const HomeScreen = ({navigation}) => {
                                 {/*{item.name}*/}
                                 Input Charger
                             </Text>
-                            <Text
-                                style={{
-                                    fontSize: SPACING * 1.5,
-                                    color: colors.gray,
-                                    marginVertical: SPACING / 2,
-                                }}
-                            >
-                                Today discount
-                            </Text>
-                            <Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>
-                                $ 10
-                            </Text>
+                            {/*<Text*/}
+                            {/*    style={{*/}
+                            {/*        fontSize: SPACING * 1.5,*/}
+                            {/*        color: colors.gray,*/}
+                            {/*        marginVertical: SPACING / 2,*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    Today discount*/}
+                            {/*</Text>*/}
+                            {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
+                            {/*    $ 10*/}
+                            {/*</Text>*/}
                             <Switch
                                 value={isEnableInput}
-                                onValueChange={(value) => setIsEnableInput(value)}
+                                onValueChange={async (value) => {
+                                    setIsEnableInput(value);
+                                    await LocalStorage.storeData('inputEnable', value ? "1" : "0");
+                                }}
                                 style={{transform: [{scaleX: .8}, {scaleY: .8}] }}
                             />
                         </TouchableOpacity>
@@ -225,21 +207,24 @@ const HomeScreen = ({navigation}) => {
                                 {/*{item.name}*/}
                                 Output Charger
                             </Text>
-                            <Text
-                                style={{
-                                    fontSize: SPACING * 1.5,
-                                    color: colors.gray,
-                                    marginVertical: SPACING / 2,
-                                }}
-                            >
-                                Today discount
-                            </Text>
-                            <Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>
-                                $ 10
-                            </Text>
+                            {/*<Text*/}
+                            {/*    style={{*/}
+                            {/*        fontSize: SPACING * 1.5,*/}
+                            {/*        color: colors.gray,*/}
+                            {/*        marginVertical: SPACING / 2,*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    Today discount*/}
+                            {/*</Text>*/}
+                            {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
+                            {/*    $ 10*/}
+                            {/*</Text>*/}
                             <Switch
-                                value={isEnableInput}
-                                onValueChange={(value) => setIsEnableInput(value)}
+                                value={isEnableOutput}
+                                onValueChange={async (value) => {
+                                    setIsEnableOutput(value);
+                                    await LocalStorage.storeData('outputEnable', value ? "1" : "0");
+                                }}
                                 style={{transform: [{scaleX: .8}, {scaleY: .8}] }}
                             />
                         </TouchableOpacity>
@@ -265,21 +250,24 @@ const HomeScreen = ({navigation}) => {
                                 {/*{item.name}*/}
                                 Min Charger
                             </Text>
-                            <Text
-                                style={{
-                                    fontSize: SPACING * 1.5,
-                                    color: colors.gray,
-                                    marginVertical: SPACING / 2,
-                                }}
-                            >
-                                Today discount
-                            </Text>
-                            <Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>
-                                $ 10
-                            </Text>
+                            {/*<Text*/}
+                            {/*    style={{*/}
+                            {/*        fontSize: SPACING * 1.5,*/}
+                            {/*        color: colors.gray,*/}
+                            {/*        marginVertical: SPACING / 2,*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    Today discount*/}
+                            {/*</Text>*/}
+                            {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
+                            {/*    $ 10*/}
+                            {/*</Text>*/}
                             <Switch
-                                value={isEnableInput}
-                                onValueChange={(value) => setIsEnableInput(value)}
+                                value={isEnableMin}
+                                onValueChange={async (value) => {
+                                    setIsEnableMin(value);
+                                    await LocalStorage.storeData('minEnable', value ? "1" : "0");
+                                }}
                                 style={{transform: [{scaleX: .8}, {scaleY: .8}] }}
                             />
                         </TouchableOpacity>
@@ -305,21 +293,24 @@ const HomeScreen = ({navigation}) => {
                                 {/*{item.name}*/}
                                 MaxCharger
                             </Text>
-                            <Text
-                                style={{
-                                    fontSize: SPACING * 1.5,
-                                    color: colors.gray,
-                                    marginVertical: SPACING / 2,
-                                }}
-                            >
-                                Today discount
-                            </Text>
-                            <Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>
-                                $ 10
-                            </Text>
+                            {/*<Text*/}
+                            {/*    style={{*/}
+                            {/*        fontSize: SPACING * 1.5,*/}
+                            {/*        color: colors.gray,*/}
+                            {/*        marginVertical: SPACING / 2,*/}
+                            {/*    }}*/}
+                            {/*>*/}
+                            {/*    Today discount*/}
+                            {/*</Text>*/}
+                            {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
+                            {/*    $ 10*/}
+                            {/*</Text>*/}
                             <Switch
-                                value={isEnableInput}
-                                onValueChange={(value) => setIsEnableInput(value)}
+                                value={isEnableMax}
+                                onValueChange={async (value) => {
+                                    setIsEnableMax(value);
+                                    await LocalStorage.storeData('maxEnable', value ? "1" : "0");
+                                }}
                                 style={{transform: [{scaleX: .8}, {scaleY: .8}] }}
                             />
                         </TouchableOpacity>

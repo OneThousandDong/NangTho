@@ -15,6 +15,7 @@ import Tts from "react-native-tts";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SPACING from "../config/SPACING";
 import BackSvg from "../assets/ic_back.svg";
+import RNFetchBlob from "rn-fetch-blob";
 
 const {height} = Dimensions.get("window");
 
@@ -25,7 +26,7 @@ const InputCharger = ({route, navigation}) => {
     const [text, setText] = useState('');
 
     const speak = async () => {
-        console.log('Hii')
+        // console.log('Hii')
         // Tts.setDefaultVoice('com.apple.ttsbundle.Samantha-compact');
         Tts.setDefaultLanguage('vi-VN');
         Tts.speak(text);
@@ -62,12 +63,13 @@ const InputCharger = ({route, navigation}) => {
 
     useTrackPlayerEvents([Event.PlaybackState], (event) => {
         if (event.state == 'stopped') {
-            console.log(event.state)
+            // console.log(event.state)
             setIsPlay(0);
         }
     })
 
     const togglePlayback = async playbackStater => {
+        await TrackPlayer.add([{url: "file://" + RNFetchBlob.fs.dirs.DocumentDir + "/msf%3A1000000018/file_example_MP3_700KB.mp3"}]);
         console.log(playbackState);
 
         if (playbackState === State.Paused || playbackState === State.Ready
@@ -114,12 +116,11 @@ const InputCharger = ({route, navigation}) => {
             const jsonValue = await AsyncStorage.getItem('inputMusic');
             if (jsonValue != null) {
                 const value = JSON.parse(jsonValue);
-                console.log(value)
                 setFileResponse([value])
                 await TrackPlayer.reset();
-                // await TrackPlayer.add([{url: "https://filesamples.com/samples/audio/mp3/Symphony%20No.6%20(1st%20movement).mp3"}]);
-                console.log(value.uri)
-                await TrackPlayer.add([{url: value.uri}]);
+                console.log(value)
+                await TrackPlayer.add([{url: "file:///" + RNFetchBlob.fs.dirs.DocumentDir + "/audio/file_example_MP3_700KB.mp3"}]);
+                // await TrackPlayer.add([{url: value.uri}]);
             }
         } catch (e) {
             // error reading value
@@ -139,16 +140,31 @@ const InputCharger = ({route, navigation}) => {
     //         // error reading value
     //     }
     // };
-
+    const test = () => {
+        RNFetchBlob.fetch('GET', 'http://ip.jsontest.com/', )
+            .then((res) => {
+                console.log(res)
+            })
+            // Something went wrong:
+            .catch((e) => {
+            })
+    }
 
     useEffect(() => {
+        RNFetchBlob.fs.ls(RNFetchBlob.fs.dirs.SDCardDir).then(files => {
+            console.log('---files---')
+            console.log(files);
+        }).catch(error => console.log(error))
+        // console.log("--RNFetchBlob.fs.dirs?.DocumentDir--")
+        // console.log(RNFetchBlob.fs.dirs?.DocumentDir)
+        // test();
         setupPlayer();
         getData();
         getDataObject();
     }, [])
     const setupPlayer = async () => {
         try {
-            console.log('setupPlayer');
+            // console.log('setupPlayer');
 
             // console.log(fileResponse);
             await TrackPlayer.setupPlayer();
