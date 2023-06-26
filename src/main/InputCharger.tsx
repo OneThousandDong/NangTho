@@ -1,4 +1,4 @@
-import { Button, Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, Dimensions, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import DocumentPicker from 'react-native-document-picker'
 import TrackPlayer, {
@@ -202,31 +202,30 @@ const InputCharger = ({route, navigation}) => {
 
     }
     return (
-        <>
+        <SafeAreaView>
             <View style={styles.container}>
                 <TouchableOpacity
                     style={{
-                        height: SPACING * 4.5,
-                        width: SPACING * 4.5,
-                        justifyContent: "center",
-                        alignItems: "center",
+                        flex: 1,
+                        justifyContent: 'flex-start',
                     }}
                     onPress={() => navigation.goBack()}
                 >
-                    <BackSvg height={25} width={25} fill="blue"/>
+                    <BackSvg height={20} width={20} fill="blue"/>
                 </TouchableOpacity>
-                <Text style={styles.title}>Input Charger</Text>
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setText}
-                    value={text}
-                    placeholder="Enter text to be spoken"
-                />
-                <Button title="Speak" onPress={async () => {
-                    await speak();
-                    await storeData("inputSpeak", text)
-                }} />
+                <Text>Input Charger</Text>
+                <View style={styles.title}></View>
             </View>
+            <TextInput
+                style={styles.input}
+                onChangeText={setText}
+                value={text}
+                placeholder="Enter text to be spoken"
+            />
+            <Button title="Speak" onPress={async () => {
+                await speak();
+                await storeData("inputSpeak", text)
+            }} />
             <Button title="Select 📑" onPress={handleDocumentSelection}/>
             {fileResponse.map((file, index) => (
                 <>
@@ -262,14 +261,6 @@ const InputCharger = ({route, navigation}) => {
                     }
                 </>
             ))}
-            {/*<Button title="Play" onPress={async () => {*/}
-            {/*    await TrackPlayer.remove(0);*/}
-            {/*    await TrackPlayer.skip(0);*/}
-            {/*    // togglePlayback(playbackState)*/}
-            {/*    await TrackPlayer.play();*/}
-            {/*    // await TrackPlayer.reset();*/}
-            {/*}}*/}
-            {/*/>*/}
             <Button title="Save" onPress={async () => {
                 if (fileResponse?.length > 0) {
                     const value = {
@@ -281,21 +272,26 @@ const InputCharger = ({route, navigation}) => {
                 }
             }}
             />
-        </>
+        </SafeAreaView>
     );
 };
 
 const {width} = Dimensions.get('window');
 
 const styles = StyleSheet.create({
-    container: {backgroundColor: 'white'},
+    container: {
+        height: 60,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: SPACING
+    },
     child: {width, justifyContent: 'center'},
     text: {fontSize: width * 0.5, textAlign: 'center'},
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 20,
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
     },
     input: {
         height: 40,

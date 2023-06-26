@@ -1,3 +1,4 @@
+
 import {
     Image,
     SafeAreaView,
@@ -14,6 +15,10 @@ import colors from "../config/Restaurant/colors";
 import { RNLauncherKitHelper } from 'react-native-launcher-kit';
 import BackgroundService from 'react-native-background-actions';
 import { LocalStorage } from "../components/LocalStorage";
+import InputCharge from "../assets/ic_input.svg";
+import OutputCharge from "../assets/ic_output.svg";
+import MinCharge from "../assets/ic_input.svg";
+import MaxCharge from "../assets/ic_input.svg";
 
 const {width} = Dimensions.get("window");
 
@@ -139,180 +144,124 @@ const HomeScreen = ({navigation}) => {
                             flexDirection: "row",
                             flexWrap: "wrap",
                             justifyContent: "space-between",
-                            marginVertical: SPACING * 2,
+                            marginVertical: SPACING * 2.5,
                         }}
                     >
                         <TouchableOpacity
-                            style={{width: ITEM_WIDTH, marginBottom: SPACING * 2}}
+                            style={styles.itemContainer}
                             onPress={() => navigation.navigate('InputCharger')}
                         >
-                            <Image
-                                style={{
-                                    width: "100%",
-                                    height: ITEM_WIDTH + SPACING * 3,
-                                    borderRadius: SPACING * 2,
-                                }}
-                                source={{uri: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'}}
-                            />
+                            <View style={{flexDirection: "row"}}>
+                                <View>
+                                    <InputCharge height={40} width={40}/>
+                                </View>
+                                <Switch
+                                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                                    thumbColor={isEnableInput ? '#f5dd4b' : '#f4f3f4'}
+                                    value={isEnableInput}
+                                    onValueChange={async (value) => {
+                                        setIsEnableInput(value);
+                                        await LocalStorage.storeData('inputEnable', value ? "1" : "0");
+                                    }}
+                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],width: ITEM_WIDTH / 1.6 }}
+                                />
+                            </View>
                             <Text
                                 style={{
-                                    fontSize: SPACING * 2,
+                                    fontSize: SPACING * 1.5,
                                     fontWeight: "700",
                                     marginTop: SPACING,
                                 }}
                             >
-                                {/*{item.name}*/}
                                 Input Charger
                             </Text>
-                            {/*<Text*/}
-                            {/*    style={{*/}
-                            {/*        fontSize: SPACING * 1.5,*/}
-                            {/*        color: colors.gray,*/}
-                            {/*        marginVertical: SPACING / 2,*/}
-                            {/*    }}*/}
-                            {/*>*/}
-                            {/*    Today discount*/}
-                            {/*</Text>*/}
-                            {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
-                            {/*    $ 10*/}
-                            {/*</Text>*/}
-                            <Switch
-                                value={isEnableInput}
-                                onValueChange={async (value) => {
-                                    setIsEnableInput(value);
-                                    await LocalStorage.storeData('inputEnable', value ? "1" : "0");
-                                }}
-                                style={{transform: [{scaleX: .8}, {scaleY: .8}] }}
-                            />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={{width: ITEM_WIDTH, marginBottom: SPACING * 2}}
+                            style={styles.itemContainer}
                             onPress={() => navigation.navigate('OutputCharger')}
                         >
-                            <Image
-                                style={{
-                                    width: "100%",
-                                    height: ITEM_WIDTH + SPACING * 3,
-                                    borderRadius: SPACING * 2,
-                                }}
-                                source={{uri: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'}}
-                            />
+                            <View style={{flexDirection: "row"}}>
+                                <View>
+                                    <OutputCharge height={40} width={40}/>
+                                </View>
+                                <Switch
+                                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                                    thumbColor={isEnableOutput ? '#f5dd4b' : '#f4f3f4'}
+                                    value={isEnableOutput}
+                                    onValueChange={async (value) => {
+                                        setIsEnableOutput(value);
+                                        await LocalStorage.storeData('outputEnable', value ? "1" : "0");
+                                    }}
+                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],width: ITEM_WIDTH / 1.6 }}
+                                />
+                            </View>
                             <Text
                                 style={{
-                                    fontSize: SPACING * 2,
+                                    fontSize: SPACING * 1.5,
                                     fontWeight: "700",
                                     marginTop: SPACING,
                                 }}
                             >
-                                {/*{item.name}*/}
                                 Output Charger
                             </Text>
-                            {/*<Text*/}
-                            {/*    style={{*/}
-                            {/*        fontSize: SPACING * 1.5,*/}
-                            {/*        color: colors.gray,*/}
-                            {/*        marginVertical: SPACING / 2,*/}
-                            {/*    }}*/}
-                            {/*>*/}
-                            {/*    Today discount*/}
-                            {/*</Text>*/}
-                            {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
-                            {/*    $ 10*/}
-                            {/*</Text>*/}
-                            <Switch
-                                value={isEnableOutput}
-                                onValueChange={async (value) => {
-                                    setIsEnableOutput(value);
-                                    await LocalStorage.storeData('outputEnable', value ? "1" : "0");
-                                }}
-                                style={{transform: [{scaleX: .8}, {scaleY: .8}] }}
-                            />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={{width: ITEM_WIDTH, marginBottom: SPACING * 2}}
+                            style={styles.itemContainer}
                             onPress={() => navigation.navigate('MinCharger')}
                         >
-                            <Image
-                                style={{
-                                    width: "100%",
-                                    height: ITEM_WIDTH + SPACING * 3,
-                                    borderRadius: SPACING * 2,
-                                }}
-                                source={{uri: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'}}
-                            />
+                            <View style={{flexDirection: "row"}}>
+                                <View>
+                                    <OutputCharge height={40} width={40}/>
+                                </View>
+                                <Switch
+                                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                                    thumbColor={isEnableMin ? '#f5dd4b' : '#f4f3f4'}
+                                    value={isEnableMin}
+                                    onValueChange={async (value) => {
+                                        setIsEnableMin(value);
+                                        await LocalStorage.storeData('minEnable', value ? "1" : "0");
+                                    }}
+                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],width: ITEM_WIDTH / 1.6 }}
+                                />
+                            </View>
                             <Text
                                 style={{
-                                    fontSize: SPACING * 2,
+                                    fontSize: SPACING * 1.5,
                                     fontWeight: "700",
                                     marginTop: SPACING,
                                 }}
                             >
-                                {/*{item.name}*/}
                                 Min Charger
                             </Text>
-                            {/*<Text*/}
-                            {/*    style={{*/}
-                            {/*        fontSize: SPACING * 1.5,*/}
-                            {/*        color: colors.gray,*/}
-                            {/*        marginVertical: SPACING / 2,*/}
-                            {/*    }}*/}
-                            {/*>*/}
-                            {/*    Today discount*/}
-                            {/*</Text>*/}
-                            {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
-                            {/*    $ 10*/}
-                            {/*</Text>*/}
-                            <Switch
-                                value={isEnableMin}
-                                onValueChange={async (value) => {
-                                    setIsEnableMin(value);
-                                    await LocalStorage.storeData('minEnable', value ? "1" : "0");
-                                }}
-                                style={{transform: [{scaleX: .8}, {scaleY: .8}] }}
-                            />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={{width: ITEM_WIDTH, marginBottom: SPACING * 2}}
+                            style={styles.itemContainer}
                             onPress={() => navigation.navigate('MaxCharger')}
                         >
-                            <Image
-                                style={{
-                                    width: "100%",
-                                    height: ITEM_WIDTH + SPACING * 3,
-                                    borderRadius: SPACING * 2,
-                                }}
-                                source={{uri: 'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg'}}
-                            />
+                            <View style={{flexDirection: "row"}}>
+                                <View>
+                                    <OutputCharge height={40} width={40}/>
+                                </View>
+                                <Switch
+                                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                                    thumbColor={isEnableMax ? '#f5dd4b' : '#f4f3f4'}
+                                    value={isEnableMax}
+                                    onValueChange={async (value) => {
+                                        setIsEnableMax(value);
+                                        await LocalStorage.storeData('maxEnable', value ? "1" : "0");
+                                    }}
+                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],width: ITEM_WIDTH / 1.6 }}
+                                />
+                            </View>
                             <Text
                                 style={{
-                                    fontSize: SPACING * 2,
+                                    fontSize: SPACING * 1.5,
                                     fontWeight: "700",
                                     marginTop: SPACING,
                                 }}
                             >
-                                {/*{item.name}*/}
                                 MaxCharger
                             </Text>
-                            {/*<Text*/}
-                            {/*    style={{*/}
-                            {/*        fontSize: SPACING * 1.5,*/}
-                            {/*        color: colors.gray,*/}
-                            {/*        marginVertical: SPACING / 2,*/}
-                            {/*    }}*/}
-                            {/*>*/}
-                            {/*    Today discount*/}
-                            {/*</Text>*/}
-                            {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
-                            {/*    $ 10*/}
-                            {/*</Text>*/}
-                            <Switch
-                                value={isEnableMax}
-                                onValueChange={async (value) => {
-                                    setIsEnableMax(value);
-                                    await LocalStorage.storeData('maxEnable', value ? "1" : "0");
-                                }}
-                                style={{transform: [{scaleX: .8}, {scaleY: .8}] }}
-                            />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -321,6 +270,11 @@ const HomeScreen = ({navigation}) => {
     );
 };
 
-export default HomeScreen;
+const styles = StyleSheet.create({
+    itemContainer: {
+        width: ITEM_WIDTH, marginBottom: SPACING * 2, backgroundColor: "#33ccff",
+        borderRadius: SPACING * 2,padding: SPACING * 2
+    }
+});
 
-const styles = StyleSheet.create({});
+export default HomeScreen;
