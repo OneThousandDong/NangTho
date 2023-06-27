@@ -7,7 +7,7 @@ import {
     Text,
     TouchableOpacity,
     View,
-    Dimensions, Switch, Button,
+    Dimensions, Switch, Button, Alert,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import SPACING from "../config/SPACING";
@@ -19,48 +19,100 @@ import InputCharge from "../assets/ic_input.svg";
 import OutputCharge from "../assets/ic_output.svg";
 import MinCharge from "../assets/ic_input.svg";
 import MaxCharge from "../assets/ic_input.svg";
+import ProgressCircle from 'progress-circle-react-native'
+import TrackPlayer, { Capability, State, usePlaybackState } from "react-native-track-player";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 const {width} = Dimensions.get("window");
 
 const ITEM_WIDTH = width / 2 - SPACING * 3;
 
 const HomeScreen = ({navigation}) => {
+    const playbackState = usePlaybackState();
     const [isEnableInput, setIsEnableInput] = useState(false);
     const [isEnableOutput, setIsEnableOutput] = useState(false);
     const [isEnableMin, setIsEnableMin] = useState(false);
     const [isEnableMax, setIsEnableMax] = useState(false);
     const [percentBattery, setPercentBattery] = useState(0);
-    const [isCharging, setIsCharging] = useState(false);
-
+    const [isCharging, setIsCharging] = useState(true);
+    const [mp3Uri, setMp3Uri] = useState("");
     useEffect(() => {
         initData();
     }, [])
     const initData = async () => {
         const result = await RNLauncherKitHelper.getBatteryStatus();
         setPercentBattery(result?.level);
-        setIsCharging(result?.isCharging);
+        // setIsCharging(result?.isCharging);
         const dataInput = await LocalStorage.getData("inputEnable");
         if (dataInput == "1") {
             setIsEnableInput(true);
         } else {
             setIsEnableInput(false);
         }
+        await setupPlayer();
+        const mp3Uri = await AsyncStorage.getItem('mp3UriInput');
+        if (mp3Uri !== null) {
+            setMp3Uri(mp3Uri);
+        }
     }
+    const setupPlayer = async () => {
+        try {
+            await TrackPlayer.setupPlayer();
+            await TrackPlayer.updateOptions({
+                // Media controls capabilities
+                capabilities: [
+                    Capability.Play,
+                    Capability.Pause,
+                    Capability.SkipToNext,
+                    Capability.SkipToPrevious,
+                    Capability.Stop,
+                ],
 
+                // Capabilities that will show up when the notification is in the compact form on Android
+                compactCapabilities: [Capability.Play, Capability.Pause, Capability.SkipToNext, Capability.SkipToPrevious, Capability.Stop],
+
+                // Icons for the notification on Android (if you don't like the default ones)
+            });
+        } catch (e) {
+        }
+    }
     const sleep = (time: any) => new Promise((resolve) => setTimeout(() => resolve(), time));
     const veryIntensiveTask = async (taskDataArguments: any) => {
         // Example of an infinite loop task
         const { delay } = taskDataArguments;
         await new Promise( async (resolve) => {
+            Alert.alert(playbackState.toString(), 'My Alert Msg', [
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+            ]);
             for (let i = 0; BackgroundService.isRunning(); i++) {
-                console.log(i);
+                // console.log(i);
+                console.log(playbackState)
                 // call api ???
-                if (percentBattery >= 50) {
-                    console.log('Hi Word')
+                // if (percentBattery >= 50) {
+                //     console.log('Hi Word')
+                // }
+                const dataInput = await LocalStorage.getData("inputEnable");
+                console.log("dataInput + " +  dataInput)
+                const charging = await RNLauncherKitHelper.getBatteryStatus();
+                // setIsEnableInput(dataInput == "1");
+                if (dataInput == "1") {
+                    if (charging) {
+                        await TrackPlayer.reset();
+                        await TrackPlayer.add([{url: "file://" + mp3Uri}]);
+                        await TrackPlayer.remove(0)
+                        await TrackPlayer.skip(0)
+                        await TrackPlayer.play();
+                    } else {
+                        await TrackPlayer.pause();
+                        await TrackPlayer.reset();
+                    }
+                } else {
+                    await TrackPlayer.pause();
                 }
-                await BackgroundService.updateNotification({
-                taskDesc: 'New ExampleTask description' + i
-                })
+                // await BackgroundService.updateNotification({
+                // taskDesc: 'New ExampleTask description' + i
+                // })
                 await sleep(delay);
             }
         });
@@ -96,8 +148,8 @@ const HomeScreen = ({navigation}) => {
                     <View
                         style={{flexDirection: "row", justifyContent: "space-between"}}
                     >
-                        {/*<Button title={"Start Background"} onPress={startBackgroundService}/>*/}
-                        {/*<Button title={"Stop Background"} onPress={stopBackgroundService}/>*/}
+                        <Button title={"Start Background"} onPress={startBackgroundService}/>
+                        <Button title={"Stop Background"} onPress={stopBackgroundService}/>
                         <View style={{flexDirection: "row", alignItems: "center"}}>
                             <Image
                                 style={{
@@ -152,18 +204,17 @@ const HomeScreen = ({navigation}) => {
                             onPress={() => navigation.navigate('InputCharger')}
                         >
                             <View style={{flexDirection: "row"}}>
-                                <View>
-                                    <InputCharge height={40} width={40}/>
-                                </View>
+                                <InputCharge height={40} width={40}/>
                                 <Switch
                                     trackColor={{false: '#767577', true: '#81b0ff'}}
                                     thumbColor={isEnableInput ? '#f5dd4b' : '#f4f3f4'}
                                     value={isEnableInput}
                                     onValueChange={async (value) => {
+                                        console.log('Value Change')
                                         setIsEnableInput(value);
                                         await LocalStorage.storeData('inputEnable', value ? "1" : "0");
                                     }}
-                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],width: ITEM_WIDTH / 1.6 }}
+                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50}}
                                 />
                             </View>
                             <Text
@@ -192,7 +243,7 @@ const HomeScreen = ({navigation}) => {
                                         setIsEnableOutput(value);
                                         await LocalStorage.storeData('outputEnable', value ? "1" : "0");
                                     }}
-                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],width: ITEM_WIDTH / 1.6 }}
+                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50}}
                                 />
                             </View>
                             <Text
@@ -221,7 +272,7 @@ const HomeScreen = ({navigation}) => {
                                         setIsEnableMin(value);
                                         await LocalStorage.storeData('minEnable', value ? "1" : "0");
                                     }}
-                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],width: ITEM_WIDTH / 1.6 }}
+                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50}}
                                 />
                             </View>
                             <Text
@@ -250,7 +301,7 @@ const HomeScreen = ({navigation}) => {
                                         setIsEnableMax(value);
                                         await LocalStorage.storeData('maxEnable', value ? "1" : "0");
                                     }}
-                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }],width: ITEM_WIDTH / 1.6 }}
+                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50}}
                                 />
                             </View>
                             <Text

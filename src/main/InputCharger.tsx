@@ -1,4 +1,14 @@
-import { Button, Dimensions, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+    Alert,
+    Button,
+    Dimensions, PermissionsAndroid, Platform,
+    SafeAreaView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View
+} from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import DocumentPicker from 'react-native-document-picker'
 import TrackPlayer, {
@@ -21,14 +31,11 @@ const {height} = Dimensions.get("window");
 
 
 const InputCharger = ({route, navigation}) => {
-    const playbackStater = usePlaybackState();
-    // const {recipe} = route.params;
-    const [text, setText] = useState('');
+    const [text, setText] = useState("");
 
     const speak = async () => {
-        // console.log('Hii')
         // Tts.setDefaultVoice('com.apple.ttsbundle.Samantha-compact');
-        Tts.setDefaultLanguage('vi-VN');
+        // Tts.setDefaultLanguage('vi-VN');
         Tts.speak(text);
     };
     const playbackState = usePlaybackState();
@@ -40,6 +47,17 @@ const InputCharger = ({route, navigation}) => {
                 presentationStyle: 'fullScreen',
             });
             setFileResponse(response);
+            RNFetchBlob.fs.stat(response[0].uri)
+                .then((stats) => {
+                    storeData("mp3UriInput", stats.path);
+                })
+                .catch((err) => {
+                })
+            // const destPath = `${RNFS.TemporaryDirectoryPath}/${response[0].name}`;
+            // await RNFS.copyFile(response[0].uri, destPath);
+            Alert.alert(response[0].uri, 'My Alert Msg', [
+                {text: 'OK', onPress: () => console.log('OK Pressed')},
+            ]);
             await TrackPlayer.reset();
             await TrackPlayer.add([{url: response[0].uri}]);
         } catch (error) {
@@ -50,7 +68,8 @@ const InputCharger = ({route, navigation}) => {
     const storeData = async (key: string, value: string) => {
         try {
             await AsyncStorage.setItem(key, value);
-        } catch (e) {}
+        } catch (e) {
+        }
     };
 
     const storeDataObject = async (key: string, value: any) => {
@@ -63,18 +82,17 @@ const InputCharger = ({route, navigation}) => {
 
     useTrackPlayerEvents([Event.PlaybackState], (event) => {
         if (event.state == 'stopped') {
-            // console.log(event.state)
             setIsPlay(0);
         }
     })
 
     const togglePlayback = async playbackStater => {
-        await TrackPlayer.add([{url: "file://" + RNFetchBlob.fs.dirs.DocumentDir + "/msf%3A1000000018/file_example_MP3_700KB.mp3"}]);
-        console.log(playbackState);
-
+        // const res = "file:///storage/emulated/0/Download/file_example_MP3_700KB.mp3"
+        // await TrackPlayer.add([{url: res}]);
+        console.log(playbackState)
         if (playbackState === State.Paused || playbackState === State.Ready
             || playbackState === State.Stopped || playbackState === State.Connecting
-            ) {
+        ) {
             await TrackPlayer.remove(0)
             await TrackPlayer.skip(0)
             await TrackPlayer.play();
@@ -82,91 +100,47 @@ const InputCharger = ({route, navigation}) => {
             await TrackPlayer.pause();
         }
     }
-    // useEffect(() => {
-    //     console.log('hi')
-    //     if (playbackState === State.Stopped) {
-    //         setIsPlay(1)
-    //     }
-    // }, [playbackStater])
+
     const getData = useCallback(async () => {
         try {
             const value = await AsyncStorage.getItem('inputSpeak');
             if (value !== null) {
                 setText(value);
             }
+            const mp3Uri = await AsyncStorage.getItem("mp3UriInput");
+            if (mp3Uri !== null) {
+                await TrackPlayer.reset();
+                await TrackPlayer.add([{url: "file://" + mp3Uri}]);
+            }
         } catch (e) {
-            // error reading value
         }
     }, []);
 
-    // async () => {
-    //     try {
-    //         const value = await AsyncStorage.getItem('inputSpeak');
-    //         if (value !== null) {
-    //             setText(value);
-    //         }
-    //     } catch (e) {
-    //         // error reading value
-    //     }
-    // };
 
     const getDataObject = useCallback(async () => {
         try {
-            // await setupPlayer();
             const jsonValue = await AsyncStorage.getItem('inputMusic');
             if (jsonValue != null) {
                 const value = JSON.parse(jsonValue);
                 setFileResponse([value])
-                await TrackPlayer.reset();
-                console.log(value)
-                await TrackPlayer.add([{url: "file:///" + RNFetchBlob.fs.dirs.DocumentDir + "/audio/file_example_MP3_700KB.mp3"}]);
-                // await TrackPlayer.add([{url: value.uri}]);
+                // await TrackPlayer.reset();
             }
         } catch (e) {
-            // error reading value
         }
     }, []);
 
-    //     = async () => {
-    //     try {
-    //         const jsonValue = await AsyncStorage.getItem('inputMusic');
-    //         if (jsonValue != null) {
-    //             const value = JSON.parse(jsonValue);
-    //             console.log(value)
-    //             setFileResponse([value])
-    //             await TrackPlayer.add([{url: value.uri}]);
-    //         }
-    //     } catch (e) {
-    //         // error reading value
-    //     }
-    // };
-    const test = () => {
-        RNFetchBlob.fetch('GET', 'http://ip.jsontest.com/', )
-            .then((res) => {
-                console.log(res)
-            })
-            // Something went wrong:
-            .catch((e) => {
-            })
+    useEffect(() => {
+        init();
+    }, [])
+
+    const init = async () => {
+        // await setupPlayer();
+        await getData();
+        await getDataObject();
     }
 
-    useEffect(() => {
-        RNFetchBlob.fs.ls(RNFetchBlob.fs.dirs.SDCardDir).then(files => {
-            console.log('---files---')
-            console.log(files);
-        }).catch(error => console.log(error))
-        // console.log("--RNFetchBlob.fs.dirs?.DocumentDir--")
-        // console.log(RNFetchBlob.fs.dirs?.DocumentDir)
-        // test();
-        setupPlayer();
-        getData();
-        getDataObject();
-    }, [])
     const setupPlayer = async () => {
         try {
-            // console.log('setupPlayer');
-
-            // console.log(fileResponse);
             await TrackPlayer.setupPlayer();
             await TrackPlayer.updateOptions({
                 // Media controls capabilities
@@ -198,8 +172,26 @@ const InputCharger = ({route, navigation}) => {
     //   ]
     // }
 
-    const playbackService = async () => {
+    const requestStoragePermission = async () => {
 
+        if (Platform.OS !== "android") return true
+
+        const pm1 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+        const pm2 = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+
+        if (pm1 && pm2) return true
+
+        const userResponse = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        ]);
+
+        if (userResponse['android.permission.READ_EXTERNAL_STORAGE'] === 'granted' &&
+            userResponse['android.permission.WRITE_EXTERNAL_STORAGE'] === 'granted') {
+            return true
+        } else {
+            return false
+        }
     }
     return (
         <SafeAreaView>
@@ -225,7 +217,7 @@ const InputCharger = ({route, navigation}) => {
             <Button title="Speak" onPress={async () => {
                 await speak();
                 await storeData("inputSpeak", text)
-            }} />
+            }}/>
             <Button title="Select 📑" onPress={handleDocumentSelection}/>
             {fileResponse.map((file, index) => (
                 <>
@@ -241,13 +233,13 @@ const InputCharger = ({route, navigation}) => {
                         {file?.size / 1024 > 1000 ? (file?.size / 1024).toFixed(1) + "MB" : Math.round(file?.size / 1024) + "KB"}
                     </Text>
                     {play == 0 ? (
-                        <TouchableOpacity onPress={async () => {
-                            setIsPlay(1);
-                            // await TrackPlayer.play();
-                            togglePlayback(playbackState)
-                        }}>
-                            <Play height={35} width={35}/>
-                        </TouchableOpacity>
+                            <TouchableOpacity onPress={async () => {
+                                setIsPlay(1);
+                                // await TrackPlayer.play();
+                                togglePlayback(playbackState)
+                            }}>
+                                <Play height={35} width={35}/>
+                            </TouchableOpacity>
                         )
                         : (
                             <TouchableOpacity onPress={async () => {
@@ -255,8 +247,8 @@ const InputCharger = ({route, navigation}) => {
                                 // await TrackPlayer.pause();
                                 togglePlayback(playbackState)
                             }}>
-                            <Pause height={35} width={35}/>
-                        </TouchableOpacity>
+                                <Pause height={35} width={35}/>
+                            </TouchableOpacity>
                         )
                     }
                 </>
@@ -268,6 +260,7 @@ const InputCharger = ({route, navigation}) => {
                         uri: fileResponse[0].uri,
                         size: fileResponse[0].size,
                     }
+                    await requestStoragePermission();
                     await storeDataObject("inputMusic", value);
                 }
             }}

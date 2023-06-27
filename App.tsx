@@ -26,7 +26,7 @@ const App = (): React.ReactElement => {
                     {/*<Stack.Screen name="Welcome" component={WelcomeScreen} />*/}
                     <Stack.Screen name="Home" component={HomeScreen} />
                     <Stack.Screen name="InputCharger" component={InputCharger} />
-                    <Stack.Screen name="OuputCharger" component={OutputCharger} />
+                    <Stack.Screen name="OutputCharger" component={OutputCharger} />
                     <Stack.Screen name="MinCharger" component={MinimumCharger} />
                     <Stack.Screen name="MaxCharger" component={MaximumCharger} />
                 </Stack.Navigator>
