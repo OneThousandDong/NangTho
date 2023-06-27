@@ -86,7 +86,7 @@ const InputCharger = ({route, navigation}) => {
         }
     })
 
-    const togglePlayback = async playbackStater => {
+    const togglePlayback = async playbackState => {
         // const res = "file:///storage/emulated/0/Download/file_example_MP3_700KB.mp3"
         // await TrackPlayer.add([{url: res}]);
         console.log(playbackState)

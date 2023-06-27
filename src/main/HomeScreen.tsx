@@ -24,18 +24,18 @@ import TrackPlayer, { Capability, State, usePlaybackState } from "react-native-t
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
-const {width} = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const ITEM_WIDTH = width / 2 - SPACING * 3;
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
     const playbackState = usePlaybackState();
     const [isEnableInput, setIsEnableInput] = useState(false);
     const [isEnableOutput, setIsEnableOutput] = useState(false);
     const [isEnableMin, setIsEnableMin] = useState(false);
     const [isEnableMax, setIsEnableMax] = useState(false);
     const [percentBattery, setPercentBattery] = useState(0);
-    const [isCharging, setIsCharging] = useState(true);
+    const [isCharging, setIsCharging] = useState(false);
     const [mp3Uri, setMp3Uri] = useState("");
     useEffect(() => {
         initData();
@@ -81,34 +81,41 @@ const HomeScreen = ({navigation}) => {
     const veryIntensiveTask = async (taskDataArguments: any) => {
         // Example of an infinite loop task
         const { delay } = taskDataArguments;
-        await new Promise( async (resolve) => {
-            Alert.alert(playbackState.toString(), 'My Alert Msg', [
-                {text: 'OK', onPress: () => console.log('OK Pressed')},
-            ]);
+        await new Promise(async (resolve) => {
+            // Alert.alert(playbackState.toString(), 'My Alert Msg', [
+            //     {text: 'OK', onPress: () => console.log('OK Pressed')},
+            // ]);
+            let checkPlay = false;
             for (let i = 0; BackgroundService.isRunning(); i++) {
-                // console.log(i);
+                console.log('Hi Mars');
                 console.log(playbackState)
-                // call api ???
-                // if (percentBattery >= 50) {
-                //     console.log('Hi Word')
-                // }
+
                 const dataInput = await LocalStorage.getData("inputEnable");
-                console.log("dataInput + " +  dataInput)
                 const charging = await RNLauncherKitHelper.getBatteryStatus();
-                // setIsEnableInput(dataInput == "1");
+                if (checkPlay) {
+                    continue;
+                }
+                if (!charging) {
+                    await TrackPlayer.pause();
+                    await TrackPlayer.reset();
+                    continue;
+                }
                 if (dataInput == "1") {
                     if (charging) {
+                        // if (playbackState === State.Paused) {
                         await TrackPlayer.reset();
-                        await TrackPlayer.add([{url: "file://" + mp3Uri}]);
+                        await TrackPlayer.add([{ url: "file://" + mp3Uri }]);
                         await TrackPlayer.remove(0)
                         await TrackPlayer.skip(0)
                         await TrackPlayer.play();
+                        checkPlay = true;
+                        // }
                     } else {
-                        await TrackPlayer.pause();
-                        await TrackPlayer.reset();
+                        // await TrackPlayer.pause();
+                        // await TrackPlayer.reset();
                     }
                 } else {
-                    await TrackPlayer.pause();
+                    // await TrackPlayer.pause();
                 }
                 // await BackgroundService.updateNotification({
                 // taskDesc: 'New ExampleTask description' + i
@@ -135,7 +142,7 @@ const HomeScreen = ({navigation}) => {
 
     const startBackgroundService = async () => {
         await BackgroundService.start(veryIntensiveTask, options);
-        await BackgroundService.updateNotification({taskDesc: 'New ExampleTask description'});
+        await BackgroundService.updateNotification({ taskDesc: 'New ExampleTask description' });
     }
     const stopBackgroundService = async () => {
         await BackgroundService.stop();
@@ -144,13 +151,13 @@ const HomeScreen = ({navigation}) => {
     return (
         <SafeAreaView>
             <ScrollView>
-                <View style={{padding: SPACING * 2}}>
+                <View style={{ padding: SPACING * 2 }}>
                     <View
-                        style={{flexDirection: "row", justifyContent: "space-between"}}
+                        style={{ flexDirection: "row", justifyContent: "space-between" }}
                     >
-                        <Button title={"Start Background"} onPress={startBackgroundService}/>
-                        <Button title={"Stop Background"} onPress={stopBackgroundService}/>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <Button title={"Start Background"} onPress={startBackgroundService} />
+                        <Button title={"Stop Background"} onPress={stopBackgroundService} />
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <Image
                                 style={{
                                     width: SPACING * 4.5,
@@ -170,7 +177,7 @@ const HomeScreen = ({navigation}) => {
                                 Erikaasav
                             </Text>
                         </View>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <Text
                                 style={{
                                     fontSize: SPACING * 1.7,
@@ -185,8 +192,8 @@ const HomeScreen = ({navigation}) => {
                             </Text>
                         </View>
                     </View>
-                    <View style={{width: "100%", marginTop: SPACING * 2, backgroundColor: '#CE8D8D'}}>
-                        <Text style={{fontSize: SPACING * 3, fontWeight: "700"}}>
+                    <View style={{ width: "100%", marginTop: SPACING * 2, backgroundColor: '#CE8D8D' }}>
+                        <Text style={{ fontSize: SPACING * 3, fontWeight: "700" }}>
                             Phan tram hien tai {percentBattery} %
                             Thoi Tiet Nhiet do
                         </Text>
@@ -203,10 +210,10 @@ const HomeScreen = ({navigation}) => {
                             style={styles.itemContainer}
                             onPress={() => navigation.navigate('InputCharger')}
                         >
-                            <View style={{flexDirection: "row"}}>
-                                <InputCharge height={40} width={40}/>
+                            <View style={{ flexDirection: "row" }}>
+                                <InputCharge height={40} width={40} />
                                 <Switch
-                                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                                    trackColor={{ false: '#767577', true: '#81b0ff' }}
                                     thumbColor={isEnableInput ? '#f5dd4b' : '#f4f3f4'}
                                     value={isEnableInput}
                                     onValueChange={async (value) => {
@@ -214,7 +221,7 @@ const HomeScreen = ({navigation}) => {
                                         setIsEnableInput(value);
                                         await LocalStorage.storeData('inputEnable', value ? "1" : "0");
                                     }}
-                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50}}
+                                    style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50 }}
                                 />
                             </View>
                             <Text
@@ -231,19 +238,19 @@ const HomeScreen = ({navigation}) => {
                             style={styles.itemContainer}
                             onPress={() => navigation.navigate('OutputCharger')}
                         >
-                            <View style={{flexDirection: "row"}}>
+                            <View style={{ flexDirection: "row" }}>
                                 <View>
-                                    <OutputCharge height={40} width={40}/>
+                                    <OutputCharge height={40} width={40} />
                                 </View>
                                 <Switch
-                                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                                    trackColor={{ false: '#767577', true: '#81b0ff' }}
                                     thumbColor={isEnableOutput ? '#f5dd4b' : '#f4f3f4'}
                                     value={isEnableOutput}
                                     onValueChange={async (value) => {
                                         setIsEnableOutput(value);
                                         await LocalStorage.storeData('outputEnable', value ? "1" : "0");
                                     }}
-                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50}}
+                                    style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50 }}
                                 />
                             </View>
                             <Text
@@ -260,19 +267,19 @@ const HomeScreen = ({navigation}) => {
                             style={styles.itemContainer}
                             onPress={() => navigation.navigate('MinCharger')}
                         >
-                            <View style={{flexDirection: "row"}}>
+                            <View style={{ flexDirection: "row" }}>
                                 <View>
-                                    <OutputCharge height={40} width={40}/>
+                                    <OutputCharge height={40} width={40} />
                                 </View>
                                 <Switch
-                                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                                    trackColor={{ false: '#767577', true: '#81b0ff' }}
                                     thumbColor={isEnableMin ? '#f5dd4b' : '#f4f3f4'}
                                     value={isEnableMin}
                                     onValueChange={async (value) => {
                                         setIsEnableMin(value);
                                         await LocalStorage.storeData('minEnable', value ? "1" : "0");
                                     }}
-                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50}}
+                                    style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50 }}
                                 />
                             </View>
                             <Text
@@ -289,19 +296,19 @@ const HomeScreen = ({navigation}) => {
                             style={styles.itemContainer}
                             onPress={() => navigation.navigate('MaxCharger')}
                         >
-                            <View style={{flexDirection: "row"}}>
+                            <View style={{ flexDirection: "row" }}>
                                 <View>
-                                    <OutputCharge height={40} width={40}/>
+                                    <OutputCharge height={40} width={40} />
                                 </View>
                                 <Switch
-                                    trackColor={{false: '#767577', true: '#81b0ff'}}
+                                    trackColor={{ false: '#767577', true: '#81b0ff' }}
                                     thumbColor={isEnableMax ? '#f5dd4b' : '#f4f3f4'}
                                     value={isEnableMax}
                                     onValueChange={async (value) => {
                                         setIsEnableMax(value);
                                         await LocalStorage.storeData('maxEnable', value ? "1" : "0");
                                     }}
-                                    style={{transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50}}
+                                    style={{ transform: [{ scaleX: 0.9 }, { scaleY: 0.9 }], marginLeft: 50 }}
                                 />
                             </View>
                             <Text
@@ -324,7 +331,7 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
     itemContainer: {
         width: ITEM_WIDTH, marginBottom: SPACING * 2, backgroundColor: "#33ccff",
-        borderRadius: SPACING * 2,padding: SPACING * 2
+        borderRadius: SPACING * 2, padding: SPACING * 2
     }
 });
 
