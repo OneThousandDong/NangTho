@@ -12,9 +12,6 @@ import React from "react";
 
 import SPACING from "../config/SPACING";
 const { height } = Dimensions.get("window");
-// import { Ionicons } from "@expo/vector-icons";
-import colors from "../config/Restaurant/colors";
-import SettingSvg from "../assets/ic_setting.svg";
 import BackSvg from "../assets/ic_back.svg";
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 

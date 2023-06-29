@@ -7,200 +7,212 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-    Dimensions,
+    Dimensions, ImageBackground, Easing, Button, Pressable,
 } from "react-native";
 import React, { useEffect, useState } from "react";
-import firestore from '@react-native-firebase/firestore';
 import SPACING from "../config/SPACING";
 import colors from "../config/Restaurant/colors";
-import DATA from "../config/Restaurant/DATA";
-import RecipeDetailScreen from "./RecipeDetailScreen";
-import { Gallery } from "../model/image";
-import { Collection } from "../model/collection";
+import FastImage from "react-native-fast-image";
+// import { Animated } from 'react-native';
+import Animated, {
+    Extrapolate,
+    interpolate,
+    useAnimatedStyle,
+    useSharedValue, withDelay,
+    withRepeat,
+    withTiming
+} from "react-native-reanimated";
 
 const {width} = Dimensions.get("window");
 
 const ITEM_WIDTH = width / 2 - SPACING * 3;
 
-const HomeScreen = ({navigation}) => {
-    const [collection, setCollection] = useState<Collection[]>([]);
-    const [gallery, setGallery] = useState<Gallery[]>([]);
+const Pulse = ({delay = 0, repeat}) => {
+    const animation = useSharedValue(0);
 
     useEffect(() => {
-        reload();
-    }, [])
-    const reload = async () => {
-        // const user = await firestore().collection('Image').doc('Anh1').get();
-        // console.log(user)
-        firestore()
-            .collection('Image')
-            .get()
-            .then(querySnapshot => {
-                // console.log('Total users: ', querySnapshot.size);
-                querySnapshot.forEach(documentSnapshot => {
-                    // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-                    const slideImage = Object.values(documentSnapshot.data()).slice(1);
-                    const data: Collection = {
-                        link: Object.values(documentSnapshot.data())[0],
-                        image: slideImage,
-                    }
-                    setCollection(value => [...value, data])
-                    // console.log(data)
-                });
-            });
-    }
-    const [activeCategory, setActiveCategory] = useState(0);
+        animation.value = withDelay(
+            delay,
+            withRepeat(withTiming(1, {
+                    duration: 2000,
+                }),
+                repeat ? -1 : 0,
+                false
+            ))
+    }, []);
+    // useEffect(() => {
+    //     animation.value = withRepeat(withTiming(1, { duration: 200, easing: Easing.linear }), 6, true);
+    //     const interval = setInterval(() => {
+    //         animation.value = withRepeat(withTiming(1, { duration: 400 }), 6, true);
+    //     }, 6000);
+    //     return () => clearInterval(interval);
+    // }, []);
+
+    const animatedStyles = useAnimatedStyle(() => {
+        const opacity = interpolate(
+            animation.value,
+            [0, 1.5],
+            [0.6, 0],
+            Extrapolate.CLAMP
+        )
+        return {
+            opacity: opacity,
+            transform: [{scale: animation.value * 1.1}]
+        }
+    })
+    return <Animated.View style={[styles.circle, animatedStyles]}/>
+}
+
+const HomeScreen = () => {
+    const [count, setCount] = useState(0);
+    useEffect(() => {
+    }, []);
+    //
+    // let spinValue = new Animated.Value(0);
+    //
+    // const startAnimation = () => {
+    //     spinValue.setValue(0);
+    //     Animated.timing(spinValue, {
+    //         toValue: 1,
+    //         duration: 200,
+    //         easing: Easing.linear,
+    //         useNativeDriver: false
+    //     }).start(() => startAnimation);
+    // }
+    // const spin = spinValue.interpolate({
+    //     inputRange: [0, 1],
+    //     outputRange: ['40deg', '30deg']
+    // })
+    // let verticalVal = new Animated.Value(0)
+    // const startFloating = () => {
+    //     Animated.timing(verticalVal,
+    //         {
+    //             toValue: 50,
+    //             duration: 1000,
+    //             easing: Easing.inOut(Easing.quad),
+    //             useNativeDriver: false,
+    //         }).start(() => startFloating());
+    //     // verticalVal.addListener(({value}) => {
+    //     //     console.log(value)
+    //     //     if (value == 50) {
+    //     //         Animated.timing(verticalVal,
+    //     //             {
+    //     //                 toValue: 0,
+    //     //                 duration: 1000,
+    //     //                 easing: Easing.inOut(Easing.quad),
+    //     //                 useNativeDriver: false,
+    //     //             }
+    //     //         ).start();
+    //     //     } else if (value == 0) {
+    //     //         Animated.timing(verticalVal,
+    //     //             {
+    //     //                 toValue: 50,
+    //     //                 duration: 1000,
+    //     //                 easing: Easing.inOut(Easing.quad),
+    //     //                 useNativeDriver: false,
+    //     //             }).start();
+    //     //     }
+    //     // })
+    // }
+    const [pulse, setPulse] = useState([1]);
+
     return (
-        <SafeAreaView>
-            <ScrollView>
-                <View style={{padding: SPACING * 2}}>
-                    <View
-                        style={{flexDirection: "row", justifyContent: "space-between"}}
+        <SafeAreaView style={{flex: 1, marginTop: width / 2}}>
+            {/*<ImageBackground source={require('../assets/back.jpg')} resizeMode="contain"*/}
+            {/*                 style={{flex: 1, justifyContent: 'center'}}>*/}
+            <View style={{flex: 1}}>
+                <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                    {/*<Pulse/>*/}
+                    <Pressable
+                        style={styles.innerCircle}
+                        onPress={() => setPulse((prev) => [...prev, Math.random()])}
                     >
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <Image
-                                style={{
-                                    width: SPACING * 4.5,
-                                    height: SPACING * 4.5,
-                                    borderRadius: SPACING * 3,
-                                    marginRight: SPACING,
-                                }}
-                                source={require("../assets/restaurant/avatar.jpg")}
-                            />
-                            <Text
-                                style={{
-                                    fontSize: SPACING * 1.7,
-                                    fontWeight: "800",
-                                    color: colors.dark,
-                                }}
-                            >
-                                Erikaasav
-                            </Text>
-                        </View>
-                        <View style={{flexDirection: "row", alignItems: "center"}}>
-                            <TouchableOpacity style={{marginRight: SPACING}}>
-                                {/*<Ionicons*/}
-                                {/*  name="notifications-outline"*/}
-                                {/*  size={SPACING * 3.5}*/}
-                                {/*  color={colors.dark}*/}
-                                {/*/>*/}
-                            </TouchableOpacity>
-                            <TouchableOpacity>
-                                {/*<Ionicons*/}
-                                {/*  name="menu"*/}
-                                {/*  size={SPACING * 3.5}*/}
-                                {/*  color={colors.dark}*/}
-                                {/*/>*/}
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    {/*<View style={{ width: "60%", marginTop: SPACING * 2 }}>*/}
-                    {/*  <Text style={{ fontSize: SPACING * 3, fontWeight: "700" }}>*/}
-                    {/*    What would you like to order?*/}
-                    {/*  </Text>*/}
-                    {/*</View>*/}
-                    {/*<View*/}
-                    {/*  style={{*/}
-                    {/*    flexDirection: "row",*/}
-                    {/*    backgroundColor: colors.light,*/}
-                    {/*    marginVertical: SPACING * 3,*/}
-                    {/*    padding: SPACING * 1.5,*/}
-                    {/*    borderRadius: SPACING,*/}
-                    {/*  }}*/}
-                    {/*>*/}
-                    {/*  /!*<Ionicons name="search" color={colors.gray} size={SPACING * 2.7} />*!/*/}
-                    {/*  <TextInput*/}
-                    {/*    placeholder="Want to .."*/}
-                    {/*    placeholderTextColor={colors.gray}*/}
-                    {/*    style={{*/}
-                    {/*      color: colors.gray,*/}
-                    {/*      fontSize: SPACING * 2,*/}
-                    {/*      marginLeft: SPACING,*/}
-                    {/*    }}*/}
-                    {/*  />*/}
-                    {/*</View>*/}
-                    <ScrollView horizontal
-                                showsVerticalScrollIndicator={false}
-                                showsHorizontalScrollIndicator={false}>
-                        {DATA.map((category, index) => (
-                            <TouchableOpacity
-                                style={{marginRight: SPACING * 3}}
-                                key={index}
-                                onPress={() => setActiveCategory(index)}
-                            >
-                                <Text
-                                    style={[
-                                        {
-                                            fontSize: SPACING * 1.7,
-                                            fontWeight: "600",
-                                            color: colors.gray,
-                                        },
-                                        activeCategory === index && {
-                                            color: colors.black,
-                                            fontWeight: "700",
-                                            fontSize: SPACING * 1.8,
-                                        },
-                                    ]}
-                                >
-                                    {category.title}
-                                </Text>
-                            </TouchableOpacity>
-                        ))}
-                    </ScrollView>
-                    <View
-                        style={{
-                            flexDirection: "row",
-                            flexWrap: "wrap",
-                            justifyContent: "space-between",
-                            marginVertical: SPACING * 2,
-                        }}
-                    >
-                        {/*{DATA[activeCategory].recipes.map((item, index) => (*/}
-                        {collection.map((item, index) => (
-                            <TouchableOpacity
-                                style={{width: ITEM_WIDTH, marginBottom: SPACING * 2}}
-                                key={index}
-                                onPress={() => navigation.navigate('Item', {recipe: item})}
-                            >
-                                <Image
-                                    style={{
-                                        width: "100%",
-                                        height: ITEM_WIDTH + SPACING * 3,
-                                        borderRadius: SPACING * 2,
-                                    }}
-                                    source={{uri: item.link}}
-                                />
-                                <Text
-                                    style={{
-                                        fontSize: SPACING * 2,
-                                        fontWeight: "700",
-                                        marginTop: SPACING,
-                                    }}
-                                >
-                                    {/*{item.name}*/}
-                                    Hi
-                                </Text>
-                                {/*<Text*/}
-                                {/*    style={{*/}
-                                {/*        fontSize: SPACING * 1.5,*/}
-                                {/*        color: colors.gray,*/}
-                                {/*        marginVertical: SPACING / 2,*/}
-                                {/*    }}*/}
-                                {/*>*/}
-                                {/*    Today discount {item.discount}*/}
-                                {/*</Text>*/}
-                                {/*<Text style={{fontSize: SPACING * 2, fontWeight: "700"}}>*/}
-                                {/*    $ {item.price}*/}
-                                {/*</Text>*/}
-                            </TouchableOpacity>
-                        ))}
-                    </View>
+                        <FastImage
+                            style={styles.innerCircle}
+                            // source={require('../assets/11.png')}
+                            source={{uri: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Bachelor%27s_button%2C_Basket_flower%2C_Boutonniere_flower%2C_Cornflower_-_3.jpg/640px-Bachelor%27s_button%2C_Basket_flower%2C_Boutonniere_flower%2C_Cornflower_-_3.jpg"}}
+                            // resizeMode={FastImage.resizeMode.contain}
+                        />
+                    </Pressable>
+                    {pulse.map((item, index) => (
+                        <Pulse repeat={index === 0}/>
+                    ))}
                 </View>
-            </ScrollView>
+                {/*<TouchableOpacity*/}
+                {/*    onPress={() => {*/}
+                {/*        // console.log('Hii')*/}
+                {/*        // startAnimation();*/}
+                {/*        // startFloating();*/}
+                {/*    }}*/}
+                {/*    style={styles.stick}*/}
+                {/*>*/}
+                {/*    <Animated.View style={{transform: [{rotate: spin}]}}>*/}
+                {/*        <FastImage*/}
+                {/*            style={{width: 200, height: 200}}*/}
+                {/*            source={require('../assets/22.png')}*/}
+                {/*            resizeMode={FastImage.resizeMode.contain}*/}
+                {/*        />*/}
+                {/*    </Animated.View>*/}
+                {/*</TouchableOpacity>*/}
+                {/*<Animated.View style={{*/}
+                {/*    backgroundColor: "#0787d7",*/}
+                {/*    height: 100,*/}
+                {/*    width: 100,*/}
+                {/*    transform: [{translateY: verticalVal}]*/}
+                {/*}}></Animated.View>*/}
+                {/*<View style={{flexDirection: 'row'}}>*/}
+                {/*    <FastImage*/}
+                {/*        style={{width: 200, height: 200}}*/}
+                {/*        source={require('../assets/qiuqian.png')}*/}
+                {/*        resizeMode={FastImage.resizeMode.contain}*/}
+                {/*    />*/}
+                {/*    <FastImage*/}
+                {/*        style={{width: 200, height: 200}}*/}
+                {/*        source={require('../assets/shaoxiang.png')}*/}
+                {/*        resizeMode={FastImage.resizeMode.contain}*/}
+                {/*    />*/}
+                {/*    <FastImage*/}
+                {/*        style={{width: 200, height: 200}}*/}
+                {/*        source={require('../assets/toutai.png')}*/}
+                {/*        resizeMode={FastImage.resizeMode.contain}*/}
+                {/*    />*/}
+                {/*    <FastImage*/}
+                {/*        style={{width: 200, height: 200}}*/}
+                {/*        source={require('../assets/zidong.png')}*/}
+                {/*        resizeMode={FastImage.resizeMode.contain}*/}
+                {/*    />*/}
+                {/*</View>*/}
+            </View>
+            {/*</ImageBackground>*/}
         </SafeAreaView>
     );
 };
 
 export default HomeScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    circle: {
+        width: 300,
+        borderRadius: 150,
+        height: 300,
+        position: 'absolute',
+        borderWidth: 3,
+        borderColor: '#e91e63',
+        backgroundColor: '#ff6090'
+    },
+    innerCircle: {
+        width: 200,
+        height: 200,
+        position: "absolute",
+        zIndex: 100,
+        borderRadius: 100,
+    },
+    stick: {
+        // position: "absolute",
+        marginTop: width / 3
+    },
+    box: {
+        width: 200,
+        height: 200,
+    }
+});
