@@ -20,22 +20,24 @@ import Animated, {
     useAnimatedStyle,
     useSharedValue, withDelay,
     withRepeat,
-    withTiming
+    withTiming,
+    concat,
+    withSequence
 } from "react-native-reanimated";
 
-const {width} = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 
 const ITEM_WIDTH = width / 2 - SPACING * 3;
 
-const Pulse = ({delay = 0, repeat}) => {
+const Pulse = ({ delay = 0, repeat }) => {
     const animation = useSharedValue(0);
 
     useEffect(() => {
         animation.value = withDelay(
             delay,
             withRepeat(withTiming(1, {
-                    duration: 2000,
-                }),
+                duration: 2000,
+            }),
                 repeat ? -1 : 0,
                 false
             ))
@@ -57,16 +59,36 @@ const Pulse = ({delay = 0, repeat}) => {
         )
         return {
             opacity: opacity,
-            transform: [{scale: animation.value * 1.1}]
+            transform: [{ scale: animation.value * 1.1 }]
         }
     })
-    return <Animated.View style={[styles.circle, animatedStyles]}/>
+    return <Animated.View style={[styles.circle, animatedStyles]} />
 }
 
 const HomeScreen = () => {
     const [count, setCount] = useState(0);
     useEffect(() => {
     }, []);
+    // const animation = useSharedValue(0);
+    // const spin = interpolate(
+    //     animation.value,
+    //     [0, 1],
+    //     [40, 30],
+    //     Extrapolate.CLAMP
+    // )
+
+    const startAnimation = () => {
+        // withTiming(1,  { 
+        //     duration: 200, 
+        //     easing: Easing.linear 
+        // })
+        // Animated.timing(spin, {
+        //     toValue: 1,
+        //     duration: 200,
+        //     easing: Easing.linear,
+        //     useNativeDriver: false
+        // }).start(() => startAnimation);
+    }
     //
     // let spinValue = new Animated.Value(0);
     //
@@ -115,14 +137,37 @@ const HomeScreen = () => {
     //     // })
     // }
     const [pulse, setPulse] = useState([1]);
+    const rotation = useSharedValue(0);
+
+    const animatedStyle = useAnimatedStyle(() => {
+        return {
+            transform: [{ rotateZ: `${rotation.value}deg` }],
+            marginLeft: 150,
+            marginTop: 10
+        };
+    });
+
+    useEffect(() => {
+        // rotation.value = withRepeat(withTiming(10, { duration: 400 }), 6, true);
+        // const interval = setInterval(() => {
+        //     rotation.value = withRepeat(withTiming(10, { duration: 400 }), 6, true);
+        // }, 6000);
+        // return () => clearInterval(interval);
+        rotation.value = withRepeat(withTiming(10, {
+                duration: 1500,
+            }),
+                -1,
+                false
+            )
+    }, [])
 
     return (
-        <SafeAreaView style={{flex: 1, marginTop: width / 2}}>
-            {/*<ImageBackground source={require('../assets/back.jpg')} resizeMode="contain"*/}
-            {/*                 style={{flex: 1, justifyContent: 'center'}}>*/}
-            <View style={{flex: 1}}>
-                <View style={{alignItems: 'center', justifyContent: 'center'}}>
-                    {/*<Pulse/>*/}
+        <SafeAreaView style={{ flex: 1 }}>
+            <ImageBackground source={require('../assets/back.jpg')} resizeMode={'cover'}
+                   style={styles.backgroundImage}>
+            <Pressable style={styles.backgroundImage} onPress={() => rotation.value = withRepeat(withTiming(0, { duration: 400 }), -1, false)}>
+                <View style={{ flex: 1 }}>
+                    {/* <View style={{alignItems: 'center', justifyContent: 'center'}}>
                     <Pressable
                         style={styles.innerCircle}
                         onPress={() => setPulse((prev) => [...prev, Math.random()])}
@@ -137,53 +182,80 @@ const HomeScreen = () => {
                     {pulse.map((item, index) => (
                         <Pulse repeat={index === 0}/>
                     ))}
+                </View> */}
+                    <View style={{flexDirection: 'row',  marginBottom: 250, marginTop: 50}}>
+                        <FastImage
+                            style={{width: 200, height: 200}}
+                            source={require('../assets/qiuqian.png')}
+                            resizeMode={FastImage.resizeMode.contain}
+                        />
+                        <FastImage
+                            style={{width: 200, height: 200}}
+                            source={require('../assets/shaoxiang.png')}
+                            resizeMode={FastImage.resizeMode.contain}
+                        />
+                    </View>
+                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                        <Pressable
+                        >
+                            <FastImage
+                                style={styles.innerCircle}
+                                source={require('../assets/11.png')}
+                                resizeMode={FastImage.resizeMode.contain}
+                            />
+                        </Pressable>
+                    </View>
+                    <Pressable
+                        onPress={() => {
+                            // console.log('Hii')
+                            // startAnimation();
+                            // startFloating();
+                            // withRepeat(withTiming(1, {
+                            //     duration: 2000,
+                            // }),
+                            //     repeat ? -1 : 0,
+                            //     false
+                            // ))
+                            // rotation.value = withRepeat(withTiming(10), 2, true)
+                            rotation.value = withRepeat(withTiming(1, { duration: 400 }), -1, false)
+                            // rotation.value = withSequence(
+                            //     withTiming(-10, { duration: 50 }),
+                            //     withRepeat(withTiming(1, { duration: 100 }), 6, true),
+                            //     withTiming(0, { duration: 50 })
+                            //   );
+                        }}
+                        style={styles.stick}
+                    >
+                        <Animated.View style={animatedStyle}>
+                            <View>
+                                <FastImage
+                                    style={{
+                                        position: "absolute" , width: 200, height: 200,
+                                        transform: [
+                                            { translateY: - Dimensions.get('window').width * 0.5 },
+                                            { rotateZ: '30deg' },],
+                                    }}
+                                    source={require('../assets/22.png')}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                />
+                            </View>
+                        </Animated.View>
+                    </Pressable>
+                    <View style={{flexDirection: 'row', marginTop: 120}}>
+                        <FastImage
+                            style={{width: 200, height: 200}}
+                            source={require('../assets/toutai.png')}
+                            resizeMode={FastImage.resizeMode.contain}
+                        />
+                        <FastImage
+                            style={{width: 200, height: 200}}
+                            source={require('../assets/zidong.png')}
+                            resizeMode={FastImage.resizeMode.contain}
+                        />
+                    </View>
                 </View>
-                {/*<TouchableOpacity*/}
-                {/*    onPress={() => {*/}
-                {/*        // console.log('Hii')*/}
-                {/*        // startAnimation();*/}
-                {/*        // startFloating();*/}
-                {/*    }}*/}
-                {/*    style={styles.stick}*/}
-                {/*>*/}
-                {/*    <Animated.View style={{transform: [{rotate: spin}]}}>*/}
-                {/*        <FastImage*/}
-                {/*            style={{width: 200, height: 200}}*/}
-                {/*            source={require('../assets/22.png')}*/}
-                {/*            resizeMode={FastImage.resizeMode.contain}*/}
-                {/*        />*/}
-                {/*    </Animated.View>*/}
-                {/*</TouchableOpacity>*/}
-                {/*<Animated.View style={{*/}
-                {/*    backgroundColor: "#0787d7",*/}
-                {/*    height: 100,*/}
-                {/*    width: 100,*/}
-                {/*    transform: [{translateY: verticalVal}]*/}
-                {/*}}></Animated.View>*/}
-                {/*<View style={{flexDirection: 'row'}}>*/}
-                {/*    <FastImage*/}
-                {/*        style={{width: 200, height: 200}}*/}
-                {/*        source={require('../assets/qiuqian.png')}*/}
-                {/*        resizeMode={FastImage.resizeMode.contain}*/}
-                {/*    />*/}
-                {/*    <FastImage*/}
-                {/*        style={{width: 200, height: 200}}*/}
-                {/*        source={require('../assets/shaoxiang.png')}*/}
-                {/*        resizeMode={FastImage.resizeMode.contain}*/}
-                {/*    />*/}
-                {/*    <FastImage*/}
-                {/*        style={{width: 200, height: 200}}*/}
-                {/*        source={require('../assets/toutai.png')}*/}
-                {/*        resizeMode={FastImage.resizeMode.contain}*/}
-                {/*    />*/}
-                {/*    <FastImage*/}
-                {/*        style={{width: 200, height: 200}}*/}
-                {/*        source={require('../assets/zidong.png')}*/}
-                {/*        resizeMode={FastImage.resizeMode.contain}*/}
-                {/*    />*/}
-                {/*</View>*/}
-            </View>
-            {/*</ImageBackground>*/}
+            </Pressable>
+            </ImageBackground>
         </SafeAreaView>
     );
 };
@@ -191,6 +263,18 @@ const HomeScreen = () => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+    test: {
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+    },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover', // or 'stretch',
+        justifyContent: 'center',
+    },
     circle: {
         width: 300,
         borderRadius: 150,
@@ -203,9 +287,9 @@ const styles = StyleSheet.create({
     innerCircle: {
         width: 200,
         height: 200,
-        position: "absolute",
-        zIndex: 100,
-        borderRadius: 100,
+        // position: "absolute",
+        // zIndex: 100,
+        // borderRadius: 100,
     },
     stick: {
         // position: "absolute",
