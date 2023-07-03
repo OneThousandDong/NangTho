@@ -19,7 +19,9 @@ import Sound from 'react-native-sound';
 import Lotus from "../assets/ic_lotus.svg";
 import Lottie from 'lottie-react-native';
 import { LocalStorage } from "./LocalStorage";
-const HomeScreen = ({ route, navigation }) => {
+import SwitchCustom from "./config/SwitchCustom";
+
+const HomeScreen = ({route, navigation}) => {
     const repeat = route?.params?.repeat;
     const repeatNumP = route?.params?.repeatN;
     const mood = route?.params?.soundMood;
@@ -44,6 +46,10 @@ const HomeScreen = ({ route, navigation }) => {
         const getSoundMood = await LocalStorage.getData('mood');
         if (getSoundMood) {
             setSoundMood(getSoundMood);
+        }
+        const getCount = await LocalStorage.getData('count');
+        if (getCount) {
+            setCount(Number(getCount));
         }
     }
     const interval = useRef(null)
@@ -79,9 +85,9 @@ const HomeScreen = ({ route, navigation }) => {
     }
     const startAnimation = () => {
         rotation.value = withSequence(
-            withTiming(0, { duration: 100 }),
+            withTiming(0, {duration: 100}),
             // withTiming(-(width / 2), {duration: 600}),
-            withTiming(10, { duration: 100 })
+            withTiming(10, {duration: 100})
         );
         if (mood) {
             if (mood === 'Âm thanh 1') {
@@ -99,17 +105,20 @@ const HomeScreen = ({ route, navigation }) => {
         setCount(count => count + 1);
         scale.value = 1.1;
         scaleW.value = 1.1;
+        LocalStorage.storeData("count", (count + 1).toString());
     }
 
     const rotation = useSharedValue(0);
 
     const animatedStyle = useAnimatedStyle(() => {
-        const scale = interpolate(rotation.value, [-10, -25], [6, 0], { extrapolateRight: Extrapolation.IDENTITY });
+        const scale = interpolate(rotation.value,
+            [-10, -25], [6, 0],
+            {extrapolateRight: Extrapolation.IDENTITY});
 
         return {
             transform: [
-                { rotateZ: `${(scale)}deg` },
-                { translateY: -scale * 3.6 },
+                {rotateZ: `${(scale)}deg`},
+                {translateY: -scale * 3.6},
             ],
             marginLeft: 150,
         };
@@ -118,7 +127,11 @@ const HomeScreen = ({ route, navigation }) => {
     const animatedStyleText = useAnimatedStyle(() => {
         return {
             transform: [
-                { scale: withTiming(scale.value, { duration: repeatNumP ? 300 / Number(repeatNumP) : 300 / Number(repeatNum) }, () => scale.value = 1) },
+                {
+                    scale: withTiming(scale.value,
+                        {duration: 100},
+                        () => scale.value = 1)
+                },
             ],
         };
     });
@@ -126,80 +139,101 @@ const HomeScreen = ({ route, navigation }) => {
     const animatedStyleW = useAnimatedStyle(() => {
         return {
             transform: [
-                { scale: withTiming(scaleW.value, { duration: 100}, () => scaleW.value = 1) },
+                {
+                    scale: withTiming(scaleW.value, {duration: 100},
+                        () => scaleW.value = 1)
+                },
             ],
         };
     });
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ImageBackground source={require('../assets/back.jpg')} resizeMode={'cover'}
-                style={styles.backgroundImage}>
+        <SafeAreaView style={{flex: 1}}>
+            {/*<ImageBackground source={require('../assets/back.jpg')} resizeMode={'cover'}*/}
+            {/*                 style={styles.backgroundImage}>*/}
                 <View style={styles.lotus}>
                     <TouchableOpacity
                         onPress={async () => {
                             const repeatN = await LocalStorage.getData('numberRepeat');
                             const repeat = await LocalStorage.getData('inputEnable');
+                            const soundMood = await LocalStorage.getData('mood');
                             navigation.navigate('Setting',
-                             { numberRepeat: repeatN, repeat: repeat == "1", sound: soundMood })
+                                {numberRepeat: repeatN, repeat: repeat == "1", sound: soundMood})
                         }}>
-                        <Lotus height={45} width={45} />
+                        <Lotus height={45} width={45}/>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => startAnimation()}>
-                    <Lottie source={require('../assets/lotus-flower.json')} autoPlay loop />
-                    <View style={{ flex: 1, flexDirection: 'row', marginTop: 50 }}>
+                <TouchableOpacity style={{flex: 1}} activeOpacity={1} onPress={() => startAnimation()}>
+                    {/*<Lottie source={require('../assets/lotus-flower.json')} autoPlay loop />*/}
+                    <View style={{flex: 1, flexDirection: 'row', marginTop: 50}}>
                     </View>
-                    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
-                    <Animated.View style={[styles.lotus, animatedStyleW]}>
-                        <FastImage
-                            style={styles.innerCircle}
-                            source={require('../assets/11.png')}
-                            resizeMode={FastImage.resizeMode.contain}
-                        />
+                    <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                        <Animated.View style={[styles.lotus, animatedStyleW]}>
+                            {/*<FastImage*/}
+                            {/*    style={styles.innerCircle}*/}
+                            {/*    source={require('../assets/11.png')}*/}
+                            {/*    resizeMode={FastImage.resizeMode.contain}*/}
+                            {/*/>*/}
                         </Animated.View>
                     </View>
-                    <Animated.View style={[animatedStyle]}>
-                        <FastImage
-                            style={{
-                                width: 200, height: 200,
-                                transform: [
-                                    { rotateZ: '32deg' }
-                                ],
-                            }}
-                            source={require('../assets/22.png')}
-                            resizeMode={FastImage.resizeMode.contain}
-                        />
-                    </Animated.View>
-                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{alignItems: 'center', justifyContent: 'center'}}>
+                        <Animated.View style={[animatedStyle]}>
+                            {/*<FastImage*/}
+                            {/*    style={{*/}
+                            {/*        width: 200, height: 200,*/}
+                            {/*        transform: [*/}
+                            {/*            { rotateZ: '32deg' }*/}
+                            {/*        ],*/}
+                            {/*    }}*/}
+                            {/*    source={require('../assets/22.png')}*/}
+                            {/*    resizeMode={FastImage.resizeMode.contain}*/}
+                            {/*/>*/}
+                        </Animated.View>
+                    </View>
+                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
                         <Animated.View style={[styles.lotus, animatedStyleText]}>
                             <Text
                                 style={{
-                                    color: '#F9F7F6', fontWeight: 'bold', fontSize: 20, fontFamily: 'Cochin'
+                                    transform: [{scale: 1.1}],
+                                    color: '#F9F7F6',
+                                    fontWeight: 'bold',
+                                    fontSize: 20,
+                                    fontFamily: 'Cochin',
+                                    paddingBottom: 10
                                 }}>
                                 {count}
                             </Text>
                         </Animated.View>
                         {repeat || repeatLocal ? (
-                            <Switch
-                                value={isEnableInput}
-                                onValueChange={async (value) => {
-                                    // const getRepeatNum = await LocalStorage.getData('numberRepeat');
-                                    setIsEnableInput(value);
-                                    if (value) {
-                                        startRepeat(repeatNumP ? repeatNumP : repeatNum);
-                                    } else {
-                                        stopRepeat();
-                                    }
+                            // <Switch
+                            //     value={isEnableInput}
+                            //     onValueChange={async (value) => {
+                            //         // const getRepeatNum = await LocalStorage.getData('numberRepeat');
+                            //         setIsEnableInput(value);
+                            //         if (value) {
+                            //             startRepeat(repeatNumP ? repeatNumP : repeatNum);
+                            //         } else {
+                            //             stopRepeat();
+                            //         }
+                            //     }}
+                            // />
+                            <SwitchCustom
+                                value={false}
+                                onValueChange={(value) => {
+                                    // if (value) {
+                                    //     startRepeat(repeatNumP ? repeatNumP : repeatNum);
+                                    // } else {
+                                    //     stopRepeat();
+                                    // }
                                 }}
-                            />) : (null)}
-
+                                activeColor={'#79ff4d'}
+                                inActiveColor={'#F2F5F7'}/>
+                        ) : null}
                     </View>
-
-                    <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20 }}>
+                    <View style={{flex: 1, flexDirection: 'row', paddingTop: 20}}>
                     </View>
                 </TouchableOpacity>
-            </ImageBackground>
+            {/*</ImageBackground>*/}
         </SafeAreaView>
     );
 };

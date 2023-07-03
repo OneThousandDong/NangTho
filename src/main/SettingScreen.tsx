@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
     Dimensions,
     SafeAreaView,
@@ -13,7 +13,8 @@ import SPACING from "../config/SPACING";
 import BackSvg from "../assets/ic_back.svg";
 import Lotus from "../assets/ic_lotus.svg";
 import InputSpinner from "react-native-input-spinner";
-import {LocalStorage} from "./LocalStorage";
+import { LocalStorage } from "./LocalStorage";
+import SwitchCustom from "./config/SwitchCustom";
 
 const SettingScreen = ({route, navigation}) => {
     let repeat = route?.params?.repeat;
@@ -22,7 +23,6 @@ const SettingScreen = ({route, navigation}) => {
     const [mood, setMood] = useState(null);
     const [numberRepeat, setNumberRepeat] = useState(0);
     const [isEnableInput, setIsEnableInput] = useState(null);
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -50,16 +50,24 @@ const SettingScreen = ({route, navigation}) => {
                     flexDirection: 'row', justifyContent: 'space-between',
                     alignItems: 'center',
                 }}>
-                    <Text style={{fontSize: 16}}>
+                    <Text style={{fontSize: 16, padding: 8}}>
                         Tự động gõ
                     </Text>
-                    <Switch
+                    {/*<Switch*/}
+                    {/*    value={isEnableInput != null ? isEnableInput : repeat}*/}
+                    {/*    onValueChange={async (value) => {*/}
+                    {/*        setIsEnableInput(value);*/}
+                    {/*        await LocalStorage.storeData('inputEnable', value ? "1" : "0");*/}
+                    {/*    }}*/}
+                    {/*/>*/}
+                    <SwitchCustom
                         value={isEnableInput != null ? isEnableInput : repeat}
                         onValueChange={async (value) => {
                             setIsEnableInput(value);
                             await LocalStorage.storeData('inputEnable', value ? "1" : "0");
                         }}
-                    />
+                        activeColor={'#79ff4d'}
+                        inActiveColor={'#F2F5F7'}/>
                 </View>
                 <View>
                     <InputSpinner
@@ -80,7 +88,7 @@ const SettingScreen = ({route, navigation}) => {
                 </View>
                 <View style={{flexDirection: 'row'}}>
                     {
-                        ['Âm thanh 1', 'Âm thanh 2'].map((sound) => {
+                        ['Âm thanh 1', 'Âm thanh 2'].map((sound, index) => {
                             return (
                                 <TouchableOpacity
                                     key={sound}
@@ -90,11 +98,21 @@ const SettingScreen = ({route, navigation}) => {
                                     }}
                                     style={styles.box}
                                 >
-                                    {(mood ? mood === sound : soundMood == sound) ? (
-                                        <Text style={[styles.boxText, styles.boxTextMood]}>{sound}</Text>
-                                    ) : (
-                                        <Text style={styles.boxText}>{sound}</Text>
-                                    )}
+                                    {
+                                        (mood == null && !soundMood) ? (index == 0 ? (
+                                                    <Text style={[styles.boxText, styles.boxTextMood]}>{sound}</Text>) :
+                                                <Text style={styles.boxText}>{sound}</Text>) :
+                                            (mood ? mood === sound : soundMood == sound) ? (
+                                                <Text style={[styles.boxText, styles.boxTextMood]}>{sound}</Text>
+                                            ) : (
+                                                <Text style={styles.boxText}>{sound}</Text>)
+                                    }
+
+                                    {/*{(mood ? mood === sound : soundMood == sound) ? (*/}
+                                    {/*    <Text style={[styles.boxText, styles.boxTextMood]}>{sound}</Text>*/}
+                                    {/*) : (*/}
+                                    {/*    <Text style={styles.boxText}>{sound}</Text>*/}
+                                    {/*)}*/}
 
                                 </TouchableOpacity>
                             )
