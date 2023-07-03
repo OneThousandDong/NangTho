@@ -2,7 +2,6 @@ import {
     SafeAreaView,
     StyleSheet,
     View, ImageBackground,
-    TouchableHighlight,
     TouchableOpacity,
     Text,
     Switch
@@ -12,9 +11,9 @@ import FastImage from "react-native-fast-image";
 import Animated, {
     interpolate,
     useAnimatedStyle,
-    useSharedValue, withDelay,
+    useSharedValue,
     withTiming,
-    withSequence, Extrapolation, log
+    withSequence, Extrapolation
 } from "react-native-reanimated";
 import Sound from 'react-native-sound';
 import Lotus from "../assets/ic_lotus.svg";
@@ -71,9 +70,9 @@ const HomeScreen = ({ route, navigation }) => {
             soundVar.play((success) => {
                 if (success) {
                     soundVar.release();
-                    console.log('successfully finished playing');
+                    console.log('successfully');
                 } else {
-                    console.log('playback failed due to audio decoding errors');
+                    console.log('failed');
                 }
             });
         }, 100)
@@ -84,9 +83,6 @@ const HomeScreen = ({ route, navigation }) => {
             // withTiming(-(width / 2), {duration: 600}),
             withTiming(10, { duration: 100 })
         );
-        console.log('====================================');
-        console.log(mood);
-        console.log('====================================');
         if (mood) {
             if (mood === 'Âm thanh 1') {
                 soundPlay(require('../assets/1.mp3'));
@@ -100,7 +96,6 @@ const HomeScreen = ({ route, navigation }) => {
                 soundPlay(require('../assets/2.mp3'));
             }
         }
-        
         setCount(count => count + 1);
         scale.value = 1.1;
         scaleW.value = 1.1;
@@ -154,17 +149,6 @@ const HomeScreen = ({ route, navigation }) => {
                 <TouchableOpacity style={{ flex: 1 }} activeOpacity={1} onPress={() => startAnimation()}>
                     <Lottie source={require('../assets/lotus-flower.json')} autoPlay loop />
                     <View style={{ flex: 1, flexDirection: 'row', marginTop: 50 }}>
-                        {/* <FastImage
-                            style={{ width: 200, height: 200 }}
-                            source={require('../assets/empty.png')}
-                            resizeMode={FastImage.resizeMode.contain}
-                        />
-                        <FastImage
-                            style={{ width: 200, height: 200 }}
-                            source={require('../assets/empty.png')}
-                            resizeMode={FastImage.resizeMode.contain}
-                        /> */}
-                        {/* <Text style={{color: 'white'}}>Tĩnh Tâm</Text> */}
                     </View>
                     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
                     <Animated.View style={[styles.lotus, animatedStyleW]}>
@@ -213,16 +197,6 @@ const HomeScreen = ({ route, navigation }) => {
                     </View>
 
                     <View style={{ flex: 1, flexDirection: 'row', paddingTop: 20 }}>
-                        {/* <FastImage
-                            style={{ width: 200, height: 200 }}
-                            source={require('../assets/empty.png')}
-                            resizeMode={FastImage.resizeMode.contain}
-                        />
-                        <FastImage
-                            style={{ width: 200, height: 200 }}
-                            source={require('../assets/empty.png')}
-                            resizeMode={FastImage.resizeMode.contain}
-                        /> */}
                     </View>
                 </TouchableOpacity>
             </ImageBackground>

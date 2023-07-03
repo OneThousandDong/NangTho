@@ -1,46 +1,27 @@
-import React, { useCallback, useEffect, useLayoutEffect, useState } from "react";
+import React, {useState} from "react";
 import {
-    Dimensions, Image,
-    ImageBackground,
+    Dimensions,
     SafeAreaView,
-    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
     View,
-    TextInput,
     Switch
 } from "react-native";
 
 import SPACING from "../config/SPACING";
-const { height } = Dimensions.get("window");
 import BackSvg from "../assets/ic_back.svg";
 import Lotus from "../assets/ic_lotus.svg";
-import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import InputSpinner from "react-native-input-spinner";
-import { LocalStorage } from "./LocalStorage";
+import {LocalStorage} from "./LocalStorage";
 
-const SettingScreen = ({ route, navigation }) => {
+const SettingScreen = ({route, navigation}) => {
     let repeat = route?.params?.repeat;
     const numRepeat = route?.params?.numberRepeat;
     const soundMood = route?.params?.sound;
     const [mood, setMood] = useState(null);
     const [numberRepeat, setNumberRepeat] = useState(0);
     const [isEnableInput, setIsEnableInput] = useState(null);
-    useEffect(() => {
-        // init();
-    }, []);
-
-    // const init = useCallback(async () => {
-    //     const getRepeat = await LocalStorage.getData('inputEnable');
-    //     if (getRepeat) {
-    //         setIsEnableInput(getRepeat == "1");
-    //     }
-    //     const getRepeatNum = await LocalStorage.getData('numberRepeat');
-    //     if (getRepeatNum) {
-    //         setNumberRepeat(Number(getRepeatNum));
-    //     }
-    // }, [])
 
     return (
         <SafeAreaView style={styles.container}>
@@ -50,15 +31,15 @@ const SettingScreen = ({ route, navigation }) => {
                         flex: 1,
                         justifyContent: 'flex-start',
                     }}
-                    onPress={() => navigation.navigate('Home', { 
-                        repeat: isEnableInput != null ? isEnableInput : repeat, 
+                    onPress={() => navigation.navigate('Home', {
+                        repeat: isEnableInput != null ? isEnableInput : repeat,
                         repeatN: numberRepeat,
                         soundMood: mood
                     })}
                 >
-                    <BackSvg height={20} width={20} />
+                    <BackSvg height={20} width={20}/>
                 </TouchableOpacity>
-                <Lotus height={45} width={45} />
+                <Lotus height={45} width={45}/>
                 <View style={styles.title}></View>
             </View>
             <View style={{
@@ -69,7 +50,7 @@ const SettingScreen = ({ route, navigation }) => {
                     flexDirection: 'row', justifyContent: 'space-between',
                     alignItems: 'center',
                 }}>
-                    <Text style={{ fontSize: 16 }}>
+                    <Text style={{fontSize: 16}}>
                         Tự động gõ
                     </Text>
                     <Switch
@@ -90,23 +71,23 @@ const SettingScreen = ({ route, navigation }) => {
                             setNumberRepeat(num);
                             await LocalStorage.storeData('numberRepeat', num?.toString());
                         }}
-                        append={<Text style={{ fontWeight: 'bold', }}>lần / giây</Text>}
+                        append={<Text style={{fontWeight: 'bold',}}>lần / giây</Text>}
                         width={200}
                         colorLeft={'none'}
                         colorPress="none"
                         color={'none'}
                     />
                 </View>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{flexDirection: 'row'}}>
                     {
                         ['Âm thanh 1', 'Âm thanh 2'].map((sound) => {
                             return (
-                                <TouchableOpacity 
+                                <TouchableOpacity
                                     key={sound}
                                     onPress={async () => {
                                         setMood(sound);
                                         await LocalStorage.storeData('mood', sound);
-                                    }} 
+                                    }}
                                     style={styles.box}
                                 >
                                     {(mood ? mood === sound : soundMood == sound) ? (
@@ -114,7 +95,7 @@ const SettingScreen = ({ route, navigation }) => {
                                     ) : (
                                         <Text style={styles.boxText}>{sound}</Text>
                                     )}
-                                    
+
                                 </TouchableOpacity>
                             )
                         })
@@ -125,30 +106,16 @@ const SettingScreen = ({ route, navigation }) => {
     );
 };
 
-const { width } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: 'gray',
     },
     header: {
-        // flex: 1,
-        // height: 100,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: SPACING * 6,
-
-    },
-    child: { width, justifyContent: 'center' },
-    text: { fontSize: width * 0.5, textAlign: 'center' },
-    input: {
-        height: 40,
-        borderColor: 'gray',
-        borderWidth: 1,
-        marginBottom: 10,
-        paddingHorizontal: 10,
     },
     title: {
         flex: 1,
@@ -160,7 +127,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         margin: 10,
         height: 50,
-        
+
     },
     boxText: {
         borderColor: '#ccccb3',
